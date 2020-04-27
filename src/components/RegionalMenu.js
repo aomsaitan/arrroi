@@ -4,7 +4,7 @@ import {Link, withRouter} from "react-router-dom";
 class RegionalMenu extends Component {
 	render() {
 		return (
-			<Link className="link region-link textS column-flex">
+			<Link className="link region-link textS column-flex" to = '/menu'>
                 {/* <div className=""> */}
 					<div className = "region-title">{this.props.title}</div>
 					<img className = "region-img" src={this.props.src} alt={this.props.alt} />

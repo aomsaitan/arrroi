@@ -23,13 +23,13 @@ class Register extends Component {
 				addressError: "",
 				passwordError: "",
 				confirmError: "",
-				phoneError: ""
-			}
+				phoneError: "",
+			},
 		};
 	}
 	getData = (e, data) => {
 		this.setState({
-			[e.target.id]: data
+			[e.target.id]: data,
 		});
 	};
 	handleSubmit = (event) => {
@@ -87,7 +87,12 @@ class Register extends Component {
 		if (isError) {
 			return false;
 		}
-		this.props.history.push("/test");
+		this.props.history.push({
+			pathname: "/login",
+			state: {
+				from: "/register",
+			},
+		});
 		return true;
 	};
 	render() {
@@ -99,7 +104,7 @@ class Register extends Component {
 						fontSize: "1.5vw",
 						textAlign: "left",
 						textIndent: "19vw",
-						margin: "0px 0px 1.5vw 0px"
+						margin: "0px 0px 1.5vw 0px",
 					}}
 				>
 					<span style={{color: "red"}}>**</span>
@@ -134,8 +139,8 @@ class Register extends Component {
 								disabled={this.state.error.nameError === ""}
 								maxLength="25"
 								hidden={true}
-                                placeholder="สมชาย"
-                                default=""
+								placeholder="สมชาย"
+								default=""
 							/>
 						</RegisterField>
 						<RegisterField
@@ -151,7 +156,7 @@ class Register extends Component {
 								maxLength="25"
 								hidden={true}
 								placeholder="รักชาติ"
-                                default=""
+								default=""
 							/>
 						</RegisterField>
 						<RegisterField
@@ -166,7 +171,7 @@ class Register extends Component {
 								maxLength="25"
 								hidden={true}
 								placeholder="test@example.com"
-                                default=""
+								default=""
 							/>
 						</RegisterField>
 						<RegisterField
@@ -178,10 +183,10 @@ class Register extends Component {
 								id="บัญชีผู้ใช้"
 								pass={this.getData}
 								disabled={this.state.error.usernameError === ""}
-								maxLength="25"
+								maxLength="11"
 								hidden={true}
 								placeholder="example_01"
-                                default=""
+								default=""
 							/>
 						</RegisterField>
 						<RegisterField
@@ -200,7 +205,7 @@ class Register extends Component {
 								maxLength="25"
 								hidden={true}
 								placeholder="Ex123456789"
-                                default=""
+								default=""
 							/>
 						</RegisterField>
 
@@ -216,7 +221,7 @@ class Register extends Component {
 								maxLength="25"
 								hidden={true}
 								placeholder="Ex123456789"
-                                default=""
+								default=""
 							/>
 						</RegisterField>
 
@@ -232,15 +237,15 @@ class Register extends Component {
 								maxLength="10"
 								hidden={true}
 								placeholder="0899199218"
-                                default=""
+								default=""
 							/>
 						</RegisterField>
 						<RegisterField
 							id="ที่อยู่"
 							display={this.state.error.addressError}
 						>
-                            <Input
-                                default=""
+							<Input
+								default=""
 								type="text"
 								id="ที่อยู่"
 								pass={this.getData}

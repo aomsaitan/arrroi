@@ -15,6 +15,14 @@
     top: 0px;
 }
 
+hr {
+    width: 90%;
+    height: 1px;
+    border: none;
+    background-color: black;
+    margin: 0.125vw auto 0.125vw auto;
+}
+
 .block {
     display: block;
 }
@@ -31,6 +39,15 @@ a {
 button {
     cursor: pointer;
     border: none;
+}
+
+
+.BG {
+    opacity: 0.2;
+    background-repeat: no-repeat;
+    position: fixed;
+    z-index: -2;
+    width: 100%;
 }
 
 .border {
@@ -380,7 +397,7 @@ div.navbar {
     height: 2vw;
     background-color: #D6C4BA;
     padding: 0.5vw;
-    /* z-index: 10; */
+    z-index: 10;
     /* box-shadow: 0.1vw 0.1vw 0.5vw #707070; */
 }
 
@@ -395,7 +412,7 @@ div.dropdown-block {
     top: 3vw;
     width: 12vw;
     padding: 1vw 0 0.5vw 0;
-    /* z-index: -10; */
+    z-index: 2;
 }
 
 div.dropdown-block {
@@ -437,12 +454,10 @@ div.dropdown-none {
 }
 
 
-
 .dropdown-content {
     font-size: 1.4vw;
-    width: fit-content;
+    width: 100%;
     text-indent: 1vw;
-
 }
 
 .dropdown-content:hover {
@@ -456,19 +471,17 @@ div.menu-page {
     align-items: center;
 }
 
-/* ////////////////////////////////////////////////////Menu///////////////////////////////////////////////////////////// */
+h1.menuPage_title {
+    font-size: 4vw;
+    margin-bottom: 2vw;
+}
+
+
+/* ////////////////////////////////////////////////////MenuList///////////////////////////////////////////////////////////// */
 
 div.menu-container {
     width: 50vw;
     margin: 0 0 2vw 0;
-}
-
-img.menu {
-    width: 25vw;
-    height: 12vw;
-    object-fit: cover;
-    margin: 0 2vw 0 0;
-    border-radius: 0.5vw;
 }
 
 div.menu-title {
@@ -482,16 +495,25 @@ div.menu-title {
 
 }
 
+.menu-link {
+    font-size: 1.5vw;
+}
+
 img.menu-icon {
     width: 2.25vw;
     margin: 1.2vw 2vw 0 1vw;
 }
 
-.menu-link {
-    font-size: 1.5vw;
+img.menu {
+    width: 25vw;
+    height: 12vw;
+    object-fit: cover;
+    margin: 0 2vw 0 0;
+    border-radius: 0.5vw;
 }
 
 /* ///////////////////////////////////////////////RegionalMenu////////////////////////////////////////////////////////// */
+
 .region-link {
     width: 14vw;
     height: 18vw;
@@ -499,10 +521,6 @@ img.menu-icon {
     background-color: #ebc27c;
     border-radius: 0.5vw;
     justify-content: center;
-}
-
-div.region-container {
-    margin: 4vw 0 4vw 0;
 }
 
 div.region-title {
@@ -525,6 +543,10 @@ img.region-img {
 
 }
 
+div.region-container {
+    margin: 4vw 0 4vw 0;
+}
+
 /* /////////////////////////////////////////////////////Slideshow/////////////////////////////////////////////////////// */
 
 div.slide-container {
@@ -541,7 +563,6 @@ div.slide {
 .storeBox {
     position: relative;
     display: flex;
-    height: 16vw;
     width: 50vw;
     border-radius: 0.5vw;
     margin: auto;
@@ -562,7 +583,7 @@ div.slide {
 
 .productDetail {
     width: 30vw;
-    padding: 2vw;
+    padding: 2vw 2vw 0 2vw;
     line-height: 3vw;
     font-size: 1.5vw;
 }
@@ -625,7 +646,6 @@ input.register {
 
 /* //////////////////////////////////////////////////MenuDetials//////////////////////////////////////////////////////// */
 
-
 h1.menu-title {
     font-size: 4vw;
     text-align: center;
@@ -633,38 +653,282 @@ h1.menu-title {
 
 img.menu_icon {
     margin: 0 2vw 0 0;
-    width:3vw;
+    width: 3vw;
 }
-div.menu-ingredients{
-    width:50%;
-    background-color:#814A2C;
-    color:white;
+
+div.menu-ingredients {
+    width: 50%;
+    background-color: #814A2C;
+    color: aliceblue;
     margin-left: calc(25% - 1vw);
     margin-right: calc(25% - 1vw);
-    border-radius: 0.5vw;
+    border-radius: 1vw;
     justify-content: space-between;
-    padding: 1vw 1vw 2vw 1vw;
+    padding: calc(1% - 1vw) 1% 1% 1%;
+    opacity: 0.95;
 }
+
 div.steps {
-    border-radius: 0.5vw;
-    background-color: #4A362B;
-    width:52%;
-    padding:1vw 4vw 2vw 4vw;
-    margin-left: calc(25% - 1vw);
-    margin-right: calc(25% - 1vw);
-    margin-bottom:2.5vw;
-    color:white;
+    border-radius: 1vw;
+    padding: 1vw 4vw 2vw 4vw;
+    color: aliceblue;
     box-sizing: border-box;
+    width: 70%;
+    background-color: #4A362B;
+    margin: 1% 15% 2.5vw 15%;
+    padding-top: 2%;
 
 }
-div.step-title{
-    border-radius: 0 0.5vw 0.5vw 0;
+
+div.step-title {
+    border-radius: 0.5vw;
     position: relative;
-    left:-4vw;
+    left: -4.5vw;
     background-color: #EBC27C;
     text-align: center;
-    width: 7vw;
+    width: 8vw;
     padding: 0.25vw;
     margin: 0 0 1vw 0;
-    color:black;
+    color: black;
+}
+
+/* /////////////////////////////////////////////////////Shop/////////////////////////////////////////////////////////// */
+
+h1.shop-title {
+    font-size: 4vw;
+    text-align: center;
+    margin: 0 0 1vw 0;
+}
+
+.shop {
+    margin-left: 4%;
+    margin-bottom: 4%;
+    border: 2px solid #EBC27C;
+    float: left;
+    width: 20%;
+    border-radius: 0.5%;
+}
+
+.shop:hover {
+    border: 2px solid #814A2C;
+    box-shadow: 10px 10px 20px #707070;
+}
+
+.cover {
+    width: 98%;
+    height: 20vw;
+}
+
+div.shop img {
+    width: 100%;
+    height: 100%;
+    margin: 1%;
+    object-fit: cover;
+}
+
+div.shop-box {
+    font-size: 2vw;
+    padding: 1%;
+    text-align: center;
+    background-color: #EBC27C;
+}
+
+div.des {
+    font-size: 1.2vw;
+    padding: 2%;
+}
+
+p.address {
+    text-align: right;
+    color: rgb(109, 103, 103);
+}
+
+div.des p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 75ch;
+}
+
+span {
+    content: "\2606";
+    content: "\2605";
+    content: "\2661";
+    /* font-size: 3vw; */
+}
+
+/* ////////////////////////////////////////////////////Loading///////////////////////////////////////////////////////// */
+
+.lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 40px 40px;
+}
+
+.lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: black;
+    margin: -4px 0 0 -4px;
+}
+
+.lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+}
+
+.lds-roller div:nth-child(1):after {
+    top: 63px;
+    left: 63px;
+}
+
+.lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+}
+
+.lds-roller div:nth-child(2):after {
+    top: 68px;
+    left: 56px;
+}
+
+.lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+}
+
+.lds-roller div:nth-child(3):after {
+    top: 71px;
+    left: 48px;
+}
+
+.lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+}
+
+.lds-roller div:nth-child(4):after {
+    top: 72px;
+    left: 40px;
+}
+
+.lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+}
+
+.lds-roller div:nth-child(5):after {
+    top: 71px;
+    left: 32px;
+}
+
+.lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+}
+
+.lds-roller div:nth-child(6):after {
+    top: 68px;
+    left: 24px;
+}
+
+.lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+}
+
+.lds-roller div:nth-child(7):after {
+    top: 63px;
+    left: 17px;
+}
+
+.lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+}
+
+.lds-roller div:nth-child(8):after {
+    top: 56px;
+    left: 12px;
+}
+
+@keyframes lds-roller {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+
+
+.menus {
+    font-size: 2.5vw;
+}
+
+.menus img {
+    width: 4%;
+    float: left;
+}
+
+.desOutbox {
+    margin-left: 10%;
+}
+
+.desOutbox p {
+    margin-left: 7%;
+}
+
+.desInbox {
+    background-color: #814A2C;
+    display: flex;
+    border-radius: 20px;
+    width: 80%;
+    margin: 2% 10% 2% 10%;
+    color: aliceblue;
+}
+
+.desInboxL {
+    padding: 1% 0% 1% 5%;
+    width: 70%;
+}
+
+.desInboxR {
+    padding: 1% 0% 1% 0%;
+    width: 30%;
+}
+
+.HowTo {
+    width: 80%;
+    background-color: #4A362B;
+    border-radius: 20px;
+    margin: 2% 10% 2% 10%;
+    padding-top: 2%;
+}
+
+.HowTo p {
+    padding: 1% 2% 1% 2%;
+    color: aliceblue;
+}
+
+.Step {
+    background-color: #EBC27C;
+    width: 10%;
+    padding: 0.5% 1% 0.5% 3.5%;
+    border-radius: 5px;
+    box-shadow: -5px 0px 0px #EBC27C;
+}
+
+.BG {
+    opacity: 0.2;
+    background-repeat: no-repeat;
+    position: fixed;
+    z-index: -2;
+    width: 100%;
 }

@@ -1,5 +1,7 @@
 import React, {Component} from "react";
-import cartW from "../images/cartW.png";
+// import cartW from "../images/cartW.png";
+import getImage from "../database/getImage";
+import Image from "./Image";
 import Input from "./Input";
 
 class BuyProduct extends Component {
@@ -13,7 +15,10 @@ class BuyProduct extends Component {
 		this.setState({
 			quantity: data,
 		});
-	};
+    };
+    componentDidMount= () => {
+        this.props.calculatePrice();
+    }
 	render() {
 		return (
 			<div
@@ -32,44 +37,63 @@ class BuyProduct extends Component {
 
 				<div className="productDetail">
 					<u className="nameOfProduct">{this.props.nameOfProduct}</u>
-					<p>
-						จำนวนที่ใช้ &nbsp;&nbsp;&nbsp; {this.props.price}
-						&nbsp;&nbsp;&nbsp; บาท
-					</p>
+					{this.props.match.url.includes("menu") ? (
+						<p>
+							จำนวนที่ใช้ &nbsp;&nbsp;&nbsp; {this.props.price}
+							&nbsp;&nbsp;&nbsp; บาท
+						</p>
+					) : null}
 					<p>
 						ราคา &nbsp;&nbsp;&nbsp; {this.props.price}
 						&nbsp;&nbsp;&nbsp; บาท
 					</p>
 					<form name="formAddDecrease" autoComplete="off">
-						<label>จำนวน</label> &nbsp;
+						<label for="button">จำนวน</label> &nbsp;
 						<Input
 							pass={this.getData}
 							id="button"
-							default={1}
+							default={this.props.quantity?this.props.quantity:1}
 							maxLength="3"
 						/>
+						{this.props.unitOfProduct}
 					</form>
-					<button
-						className="addToCartButton textS"
-						align="center"
-						style={
-							this.props.color === "brown"
-								? {backgroundColor: "#4A362B"}
-								: {backgroundColor: "#814A2C"}
-						}
-					>
-						<img
-							className="cartImg"
-							src={cartW}
-							alt="shopping_cart"
+					{this.props.type === "x" ? (
+						<Image
+							style={{
+								width: "2.3vw",
+								float: "right",
+								position: "relative",
+								top: "1.5vw",
+								left: "-1vw",
+								cursor: "pointer",
+							}}
+							id={this.props.imgType}
+							alt="trash"
+							// onClick={this.remove}
 						/>
-						<span style={{position: "relative", top: "-0.9vw"}}>
-							เพิ่มในรถเข็น
-						</span>
-					</button>
+					) : (
+						<button
+							className="addToCartButton textS"
+							align="center"
+							style={
+								this.props.color === "brown"
+									? {backgroundColor: "#4A362B"}
+									: {backgroundColor: "#814A2C"}
+							}
+						>
+							<Image
+								className="cartImg"
+								nameIcon="cartW"
+								alt="shopping_cart"
+							/>
+							<span style={{position: "relative", top: "-0.9vw"}}>
+								เพิ่มในรถเข็น
+							</span>
+						</button>
+					)}
 				</div>
 			</div>
 		);
 	}
 }
-export default BuyProduct;
+export default getImage(BuyProduct);

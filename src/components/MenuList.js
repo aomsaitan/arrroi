@@ -16,7 +16,7 @@ class MenuList extends Component {
 					<div className="row-flex">
 						<Link
 							className="link menu-link"
-							to={"/menu" + this.props.menu + "/ingredients"} //ชื่อเมนูอยู่ตรงกลาง เช่น /menu/กุ้งคั่วกระเทียมพริก/ingredients
+							to={"/menu/" + this.props.menu + "/ingredients"} //ชื่อเมนูอยู่ตรงกลาง เช่น /menu/กุ้งคั่วกระเทียมพริก/ingredients
 						>
 							<img className="menu-icon" src={pan} alt="pan" />
 							ซื้อส่วนผสม
@@ -25,7 +25,7 @@ class MenuList extends Component {
 					<div className="row-flex">
 						<Link
 							className="link menu-link"
-							to={"/menu" + this.props.menu + "/steps"} //ชื่อเมนูอยู่ตรงกลาง เช่น /menu/กุ้งคั่วกระเทียมพริก/steps
+							to={"/menu/" + this.props.menu + "/steps"} //ชื่อเมนูอยู่ตรงกลาง เช่น /menu/กุ้งคั่วกระเทียมพริก/steps
 						>
 							<img className="menu-icon" src={mix} alt="mix" />
 							วิธีทำ

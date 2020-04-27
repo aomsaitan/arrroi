@@ -135,8 +135,10 @@ class Input extends Component {
 							event.preventDefault();
 						}}
 						onKeyDown={this.checkInput}
-                        maxLength={this.props.maxLength}
-                        onClick={(e) => { e.target.select();}}
+						maxLength={this.props.maxLength}
+						onClick={(e) => {
+							e.target.select();
+						}}
 					/>
 					<input
 						className="button textS"
@@ -220,6 +222,7 @@ class Input extends Component {
 									? "login-close close"
 									: "login-hidePassword hidePassword"
 							}
+							tabIndex="-1"
 							style={this.props.style}
 							onClick={this.handleClick}
 						/>

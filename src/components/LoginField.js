@@ -4,11 +4,11 @@ import Input from "./Input";
 class LoginField extends Component {
 	render() {
 		return (
-            <>
+			<>
 				<label className="left" htmlFor={this.props.id}>
-                    {this.props.id}
-						</label>
-                {this.props.children}
+					{this.props.id}
+				</label>
+				{this.props.children}
 			</>
 		);
 	}

@@ -1,6 +1,9 @@
 import React, {Component} from "react";
 import LoginField from "./LoginField";
 import {withRouter} from "react-router-dom";
+import {login} from "../redux/index";
+import {connect} from "react-redux";
+import {compose} from "redux";
 import Input from "./Input";
 class Login extends Component {
 	constructor() {
@@ -8,20 +11,21 @@ class Login extends Component {
 		this.state = {
 			Email: "",
 			Password: "",
+			username: "admin",
 			error: {
 				emailError: "",
-				passwordError: ""
-			}
+				passwordError: "",
+			},
 		};
 	}
 	getData = (e, data, what = true) => {
 		if (what)
 			this.setState({
-				[e.target.id]: data
+				[e.target.id]: data,
 			});
 		else
 			this.setState({
-				[e.id]: data
+				[e.id]: data,
 			});
 	};
 	handleSubmit = (event) => {
@@ -39,11 +43,15 @@ class Login extends Component {
 		if (isError) {
 			return false;
 		}
-		this.props.history.push("/test");
+        this.props.login(this.state.username);
+        this.props.history.location.state
+            ? this.props.history.go(-2)
+			: this.props.history.goBack()
 		return true;
 	};
 
 	render() {
+        console.log(this.props.history)
 		return (
 			<div className="horizontal-center textS">
 				<p className="title">Log in</p>
@@ -62,8 +70,8 @@ class Login extends Component {
 							maxLength="25"
 							display={this.state.error.emailError}
 							type="text"
-                            style={{ top: "-2.8vw", left: "37.6vw" }}
-                            default=""
+							style={{top: "-2.8vw", left: "37.6vw"}}
+							default=""
 						/>
 					</LoginField>
 					<LoginField id="Password">
@@ -76,7 +84,7 @@ class Login extends Component {
 							maxLength="30"
 							type="password"
 							style={{top: "-3.3vw", left: "37vw"}}
-                            default=""
+							default=""
 						/>
 					</LoginField>
 				</form>
@@ -94,4 +102,10 @@ class Login extends Component {
 	}
 }
 
-export default withRouter(Login);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		login: (username) => dispatch(login(username)),
+	};
+};
+
+export default compose(connect(null, mapDispatchToProps), withRouter)(Login);

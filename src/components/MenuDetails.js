@@ -1,97 +1,137 @@
 import React, {Component} from "react";
-import pan from "../images/pan.png";
-import mix from "../images/mix.png";
-import people from "../images/networking.png";
+import firebase from "../database/firebase";
+import Loading from "./Loading";
+import MenuField from "./MenuField";
+import Image from './Image'
 class MenuDetails extends Component {
 	constructor(props) {
 		super(props);
-        this.state = {
-            name: this.props.match.params.name, //ชื่อเมนูอาหาร เช่น กุ้งคั่วกระเทียมพริก จาก url
-            multiplier: "", //สำหรับใส่จำนวนที่
-            ingredientsList: "", //สำหรับใส่ list ส่วนผสม
-            stepsList:"" //สำหรับใส่ list วิธีการทำอาหาร
-        };
+		this.state = {
+			//name: this.props.match.params.name, //ชื่อเมนูอาหาร เช่น กุ้งคั่วกระเทียมพริก จาก url
+			name: "กุ้งคั่วกระเทียมพริก",
+			multiplier: "", //สำหรับใส่จำนวนที่
+			ingredientsList: "", //สำหรับใส่ list ส่วนผสม
+			stepsList: "", //สำหรับใส่ list วิธีการทำอาหาร
+			temp: "",
+			loading: true,
+		};
 	}
 
-    //ใส่ didMount ตรงนี้ก็ได้ ถ้ามี loading ก็เขียนเพิ่มใน state ได้เลย เดี๋ยวเรามาเรียง ingredients กับ steps ต่อให้
+	//ใส่ didMount ตรงนี้ก็ได้ ถ้ามี loading ก็เขียนเพิ่มใน state ได้เลย เดี๋ยวเรามาเรียง ingredients กับ steps ต่อให้
+	componentWillMount = async () => {
+		// await this.importdata();
+		// await this.getname();
+	};
 
-    render() {
-		return (
-			<div className="textS" style={{fontSize: "1.5vw"}}>
-                <h1 className="menu-title">{this.state.name}</h1>
-                {/* //////////////////////////////////////////ส่วนจำนวนที่/////////////////////////////////////// */}
-				<div style={{margin: "0 0 1vw 16vw"}}>
-					<img src={people} alt="people" className="menu_icon" />
-					<span style={{position: "relative", top: "-1vw"}}>
-						สำหรับ&nbsp;6&nbsp;ที่
-					</span>
+	getname = async () => {
+		let db = firebase.firestore().collection("product");
+		for (
+			let index = 0;
+			index < this.state.ingredientsList.length;
+			index++
+		) {
+			await db
+				.doc(this.state.ingredientsList[index].product_id)
+				.get()
+				.then((documentsnapshot) => {
+					this.setState((prevState) => ({
+						...prevState,
+						ingredientsList: [
+							...prevState.ingredientsList.slice(0, index),
+							Object.assign(
+								{},
+								prevState.ingredientsList[index],
+								{name: documentsnapshot.data().name}
+							),
+							...prevState.ingredientsList.slice(index + 1),
+						],
+					}));
+				});
+		}
+		this.setState((prevState) => ({
+			...prevState,
+			loading: false,
+		}));
+	};
+
+	importdata = async () => {
+		let db = firebase.firestore();
+		await db
+			.collection("menu")
+			.where("name", "==", this.state.name)
+			.limit(1)
+			.get()
+			.then((querysnapshot) => {
+				querysnapshot.forEach((documentsnapshot) => {
+					this.setState({
+						multiplier: documentsnapshot.data().multiplier,
+						ingredientsList: documentsnapshot.data().productList,
+						stepsList: documentsnapshot.data().howto,
+					});
+				});
+			});
+	};
+
+	render() {
+		if (!this.state.loading)
+			return (
+				<div className="textS" style={{fontSize: "1.5vw"}}>
+					<h1 className="menu-title">{this.state.name}</h1>
+					{/* //////////////////////////////////////////ส่วนจำนวนที่/////////////////////////////////////// */}
+                    <Image alt="background" className="BG" nameFood={this.state.name}/>
+					<MenuField
+						type="mulitplier"
+						multiplier={this.state.multiplier}
+						nameIcon="networking"
+						alt="people"
+					/>
+					<MenuField
+						type="ingredient"
+						nameIcon="pan"
+						alt="ingredients"
+					/>
+					{/* //////////////////////////////////////////กองทัพส่วนผสมต่าง ๆ////////////////////////////////////// */}
+					<div className="menu-ingredients column-flex">
+						{this.state.ingredientsList.map((ingredient) => {
+							return (
+								<div
+									className="row-flex"
+									style={{marginTop: "1vw"}}
+									key={ingredient.product_id}
+								>
+									<div
+										style={{
+											width: "140%",
+											marginLeft: "3vw",
+										}}
+									>
+										{ingredient.name}
+									</div>
+									<div style={{width: "60%"}}>
+										{ingredient.quantity}
+									</div>
+								</div>
+							);
+						})}
+					</div>
+					{/* //////////////////////////////////////////วิธีทำตั่งต่าง ๆ////////////////////////////////////// */}
+                    
+					<MenuField
+						type="step"
+						nameIcon="mix"
+						alt="steps"
+					/>
+					{this.state.stepsList.map((step, i) => {
+						return (
+							<div className="steps" key={i}>
+								<div className="step-title">Step{i + 1}</div>
+								{step}
+							</div>
+						);
+					})}
 				</div>
-				<div style={{margin: "0 0 1vw 16vw"}}>
-					<img src={pan} alt="ingredients" className="menu_icon" />
-					<span style={{position: "relative", top: "-1vw"}}>
-						ส่วนผสม
-					</span>
-				</div>
-                {/* //////////////////////////////////////////กองทัพส่วนผสมต่าง ๆ////////////////////////////////////// */}
-				<div className="menu-ingredients column-flex">
-					<div className="row-flex" style={{marginTop: "1vw"}}>
-						<div style={{width: "140%", marginLeft: "3vw"}}>
-							เนื้อสันในวัวหั่นชิ้นบางขนาดพอคำ
-						</div>
-						<div style={{width: "60%"}}>300 กรัม</div>
-					</div>
-					<div className="row-flex" style={{marginTop: "1vw"}}>
-						<div style={{width: "140%", marginLeft: "3vw"}}>
-							เนื้อสันในวัวหั่นชิ้นบางขนาดพอคำ
-						</div>
-						<div style={{width: "60%"}}>5 ต้น (200 กรัม)</div>
-					</div>
-					<div className="row-flex" style={{marginTop: "1vw"}}>
-						<div style={{width: "140%", marginLeft: "3vw"}}>
-							เนื้อสันในวัวหั่นชิ้นบางขนาดพอคำ
-						</div>
-						<div style={{width: "60%"}}>300 กรัม</div>
-					</div>
-					<div className="row-flex" style={{marginTop: "1vw"}}>
-						<div style={{width: "140%", marginLeft: "3vw"}}>
-							เนื้อสันในวัวหั่นชิ้นบางขนาดพอคำ
-						</div>
-						<div style={{width: "60%"}}>300 กรัม</div>
-					</div>
-					<div className="row-flex" style={{marginTop: "1vw"}}>
-						<div style={{width: "140%", marginLeft: "3vw"}}>
-							เนื้อสันในวัวหั่นชิ้นบางขนาดพอคำ
-						</div>
-						<div style={{width: "60%"}}>300 กรัม</div>
-					</div>
-					<div className="row-flex" style={{marginTop: "1vw"}}>
-						<div style={{width: "140%", marginLeft: "3vw"}}>
-							ซอสปรุงอาหารตราแม็กกี้ สูตรผัดกลมกล่อม
-						</div>
-						<div style={{width: "60%"}}>300 กรัม</div>
-					</div>
-                </div>
-                {/* //////////////////////////////////////////วิธีทำตั่งต่าง ๆ////////////////////////////////////// */}
-				<div style={{margin: "2vw 0 2vw 16vw"}}>
-					<img src={mix} alt="steps" className="menu_icon" />
-					<span style={{position: "relative", top: "-0.75vw"}}>
-						วิธีทำ
-					</span>
-				</div>
-				<div className="steps">
-					<div className="step-title">Step1</div>
-					หมักเนื้อวัว โดยปรุงรสด้วยซอสหอยนางรม ซอสปรุงอาหาร ซีอิ๊วดำ
-					พริกไทยป่นและน้ำตาลทราย คลุกเคล้าให้เข้ากัน
-					พักไว้ในตู้เย็นประมาณ 30 นาที
-				</div>
-				<div className="steps">
-					<div className="step-title">Step2</div>
-					หมักเนื้อวัว โดยปรุงรสด้วยซอสหอยนางรม ซอสปรุงอาหาร ซีอิ๊วดำ
-					พริกไทยป่นและน้ำตาลทราย คลุกเคล้าให้เข้ากัน
-					พักไว้ในตู้เย็นประมาณ 30 นาที
-				</div>
-			</div>
-		);
+			);
+		else return <Loading />;
 	}
 }
 
