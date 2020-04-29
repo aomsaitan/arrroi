@@ -1,4 +1,8 @@
-import {ADD_TO_CART, REMOVE_FROM_CART} from "../actions/addToCartAction";
+import {
+	ADD_TO_CART,
+	REMOVE_FROM_CART,
+	UPDATE_CART,
+} from "../actions/addToCartAction";
 const initialState = {
 	productList: [],
 };
@@ -14,9 +18,13 @@ export const addToCartReducer = (state = initialState, action) => {
 			return {
 				...state,
 				productList: [
-					...state.productList.slice(0, state.productList.indexOf(action.payload)),
-					...state.productList.slice(state.productList.indexOf(action.payload + 1)),
+					...state.productList.slice(0, action.payload),
+					...state.productList.slice(action.payload + 1),
 				],
+			};
+		case UPDATE_CART:
+			return {
+				...state
 			};
 		default:
 			return state;

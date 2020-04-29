@@ -3,6 +3,7 @@ import RegisterField from "./RegisterField";
 import Input from "./Input";
 import information from "../images/information.png";
 import {withRouter} from "react-router-dom";
+import firebase from "../database/firebase";
 class Register extends Component {
 	constructor() {
 		super();
@@ -32,6 +33,102 @@ class Register extends Component {
 			[e.target.id]: data,
 		});
 	};
+	checkUsername = () => {
+		//check username
+		let db = firebase.firestore();
+		db.collection("user")
+			.where("username", "==", this.state.บัญชีผู้ใช้)
+			.get()
+			.then((snapshot) => {
+				snapshot.forEach((doc) => {
+					if (doc.data().username === this.state.บัญชีผู้ใช้) {
+						this.setState((prevState) => {
+							let error = Object.assign({}, prevState.error);
+							error.usernameError = "บัญชีผู้ใช้นี้ถูกใช้ไปแล้ว";
+							return {error};
+						});
+						return false;
+					}
+				});
+			})
+			.catch(function (error) {
+				console.log("Error getting document:", error);
+			});
+	};
+	signup = () => {
+		//signup (Register) add account to auth
+		console.log("debug1");
+
+		firebase
+			.auth()
+			.createUserWithEmailAndPassword(
+				this.state.อีเมล,
+				this.state.รหัสผ่าน
+			)
+			.then((u) => {
+				this.addCartToFirestore();
+				this.addDataToFirestore();
+				this.props.history.push({
+					pathname: "/login",
+					state: {
+						from: "/register",
+					},
+				});
+			})
+			.catch((e) => {
+				console.log(e.message);
+				this.setState((prevState) => {
+					let error = Object.assign({}, prevState.error);
+					error.emailError = e.message;
+					return {error};
+				});
+			});
+	};
+	addCartToFirestore = async () => {
+		let db = firebase.firestore().collection("cart").doc();
+		console.log(db.id);
+		await db
+			.set({
+				cartlist: [
+					{
+						created_at: firebase.firestore.Timestamp.now(),
+						payment_status: Boolean(false),
+						price: 0,
+						productlist: [],
+					},
+				],
+			})
+			.then(
+				this.setState({
+					cartid: db.id,
+				})
+			);
+	};
+
+	addDataToFirestore = () => {
+		//add data to firestore
+		let db = firebase.firestore();
+		db.collection("user")
+			.add({
+				name: this.state.ชื่อจริง,
+				surname: this.state.นามสกุล,
+				email: this.state.อีเมล,
+				username: this.state.บัญชีผู้ใช้,
+				address: this.state.ที่อยู่,
+				phone: this.state.เบอร์โทรศัพท์,
+				cartid: this.state.cartid,
+				menu: [],
+				store_id: "",
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
+
+	process = async () => {
+		if (await this.checkUsername()) await this.signup();
+	};
+
 	handleSubmit = (event) => {
 		let error = this.state.error;
 		let isError = false;
@@ -72,6 +169,7 @@ class Register extends Component {
 				  this.state.เบอร์โทรศัพท์.charAt(0) === "0"
 				? ""
 				: "เบอร์โทรศัพท์ไม่ถูกต้อง";
+		this.setState({error});
 		isError =
 			error.usernameError !== "" ||
 			error.passwordError !== "" ||
@@ -83,16 +181,11 @@ class Register extends Component {
 			error.phoneError !== ""
 				? true
 				: false;
-		this.setState({error});
+		//Go to check with firestore
 		if (isError) {
 			return false;
 		}
-		this.props.history.push({
-			pathname: "/login",
-			state: {
-				from: "/register",
-			},
-		});
+		this.process();
 		return true;
 	};
 	render() {

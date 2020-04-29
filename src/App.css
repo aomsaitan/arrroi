@@ -14,6 +14,9 @@
     margin: 0px;
     top: 0px;
 }
+/* html{
+    overflow-y: hidden;
+} */
 
 hr {
     width: 90%;
@@ -159,7 +162,6 @@ button.login {
     background-color: #4a362b;
     margin: 0px 1.5vw 0px 1.5vw;
     font-size: 2vw;
-    transition: 0.3s;
 }
 
 input.user,
@@ -283,7 +285,9 @@ label.register {
 img.icon {
     width: 40%;
     cursor: pointer;
-    margin: 0px 0px -0.5vw 0px;
+    margin: 0.25vw 0px -0.5vw 1.25vw;
+    top:-0.25vw;
+    position: relative;
 }
 
 button.register {
@@ -297,7 +301,7 @@ input.error {
 }
 
 div.info {
-    font-size: 1.25vw;
+    font-size: 1vw;
     text-align: left;
 }
 

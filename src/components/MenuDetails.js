@@ -7,8 +7,7 @@ class MenuDetails extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//name: this.props.match.params.name, //ชื่อเมนูอาหาร เช่น กุ้งคั่วกระเทียมพริก จาก url
-			name: "กุ้งคั่วกระเทียมพริก",
+			name: this.props.match.params.name, //ชื่อเมนูอาหาร เช่น กุ้งคั่วกระเทียมพริก จาก url
 			multiplier: "", //สำหรับใส่จำนวนที่
 			ingredientsList: "", //สำหรับใส่ list ส่วนผสม
 			stepsList: "", //สำหรับใส่ list วิธีการทำอาหาร
@@ -19,8 +18,8 @@ class MenuDetails extends Component {
 
 	//ใส่ didMount ตรงนี้ก็ได้ ถ้ามี loading ก็เขียนเพิ่มใน state ได้เลย เดี๋ยวเรามาเรียง ingredients กับ steps ต่อให้
 	componentWillMount = async () => {
-		// await this.importdata();
-		// await this.getname();
+		await this.importdata();
+		await this.getname();
 	};
 
 	getname = async () => {

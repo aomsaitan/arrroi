@@ -3,8 +3,13 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-
-
+import store from "./redux/store";
+window.addEventListener("beforeunload", () => {
+	if (store.getState().loginReducer.isLoggedIn) {
+		console.log(store.getState().addToCartReducer.productList);
+	}
+	return null;
+});
 document.addEventListener("mouseup", (event) => {
 	let x = document.getElementById("dropdown");
 	let y = document.getElementById("more_menu");

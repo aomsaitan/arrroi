@@ -5,13 +5,14 @@ import {login} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Input from "./Input";
+import firebase from "../database/firebase";
 class Login extends Component {
 	constructor() {
 		super();
 		this.state = {
 			Email: "",
 			Password: "",
-			username: "admin",
+			username: "",
 			error: {
 				emailError: "",
 				passwordError: "",
@@ -26,6 +27,26 @@ class Login extends Component {
 		else
 			this.setState({
 				[e.id]: data,
+			});
+	};
+
+	signin = () => {
+		firebase
+			.auth()
+			.signInWithEmailAndPassword(this.state.Email, this.state.Password)
+			.then((u) => {
+				this.props.history.location.state
+					? this.props.history.go(-2)
+					: this.props.history.goBack();
+				this.props.login(this.state.username);
+			})
+			.catch((e) => {
+				this.setState((prevState) => {
+					let error = Object.assign({}, prevState.error);
+					error.emailError = "Email or password is incorrect.";
+					error.passwordError = "Email or password is incorrect.";
+					return {error};
+				});
 			});
 	};
 	handleSubmit = (event) => {
@@ -43,15 +64,12 @@ class Login extends Component {
 		if (isError) {
 			return false;
 		}
-        this.props.login(this.state.username);
-        this.props.history.location.state
-            ? this.props.history.go(-2)
-			: this.props.history.goBack()
+		this.signin();
 		return true;
 	};
 
 	render() {
-        console.log(this.props.history)
+		console.log(this.props.history);
 		return (
 			<div className="horizontal-center textS">
 				<p className="title">Log in</p>

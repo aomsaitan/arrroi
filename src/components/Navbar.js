@@ -209,7 +209,31 @@ class Navbar extends Component {
 						</Link>
 					</>
 				)}
-				<Link className="link" to="/cart">
+				<Link className="link" to={this.props.isLoggedIn?"/"+this.props.username+"/cart":'/login'}>
+					{this.props.numberOfItems !== 0 ? (
+						<div
+							style={{
+								position: "absolute",
+								fontSize: "1vw",
+								padding:
+									this.props.numberOfItems > 99
+										? "0"
+										: this.props.numberOfItems > 10
+										? "0 0.3vw 0 0.3vw"
+										: "0 0.5vw 0 0.5vw",
+								backgroundColor: "red",
+								borderRadius: "50%",
+								left: "94.4%",
+								top: "0.15vw",
+								zIndex: "10",
+							}}
+                        >
+
+							{this.props.numberOfItems > 99
+								? "99+"
+								: this.props.numberOfItems}
+						</div>
+					) : null}
 					<img
 						style={{
 							width: "2%",
@@ -231,7 +255,7 @@ const mapStateToProps = (state) => {
 	return {
 		isLoggedIn: state.loginReducer.isLoggedIn,
 		username: state.loginReducer.username,
-		numberOfItems: state.numberOfItems,
+		numberOfItems: state.addToCartReducer.productList.length,
 	};
 };
 const mapDispatchToProps = (dispatch) => {

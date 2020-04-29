@@ -13,15 +13,15 @@ class Input extends Component {
 	addValue = () => {
 		this.setState((prevState) => ({
 			text:
-				parseInt(prevState.text) < 999
-					? parseInt(prevState.text) + 1
-					: 999,
+				parseInt(prevState.text) < 1000-this.props.multiplier
+					? parseInt(prevState.text) + this.props.multiplier
+					: 1000-this.props.multiplier,
 		}));
 	};
 	decreaseValue = () => {
 		this.setState((prevState) => ({
 			text:
-				parseInt(prevState.text) > 0 ? parseInt(prevState.text) - 1 : 0,
+				parseInt(prevState.text) > 0 ? parseInt(prevState.text) - this.props.multiplier : 0,
 		}));
 	};
 	handleChange = (event) => {

@@ -1,42 +1,40 @@
 import React, {Component} from "react";
 import BuyProduct from "./BuyProduct";
 import เนื้อสันในวัว from "../images/เนื้อสันในวัว.jpg";
+import {addToCart, removeFromCart} from "../redux/index";
+import {connect} from "react-redux";
+import {compose} from "redux";
+import {withRouter} from "react-router-dom";
 
 class Cart extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			productList: [
-				{
-					name: "เนื้อสันในวัว 150 กรัม",
-					price: 99,
-					unit: "ถุง",
-					quantity: 10,
-				},
-				{
-					name: "เนื้อสันในวัว 150 กรัม",
-					price: 99,
-					unit: "ถุง",
-					quantity: 10,
-				},
-				{
-					name: "เนื้อสันในวัว 150 กรัม",
-					price: 99,
-					unit: "ถุง",
-					quantity: 10,
-				},
-			],
+			// productList: this.props.productList,
 			totalPrice: 0,
 			paymentStatus: false,
 		};
-    }
-    sendCart = () => {
-        //send to database
-    }
-    componentDidMount = () => {
-        //database
-    }
+	}
+	sendCart = () => {
+		//send to database
+    };
+    // storeCar
+	// sendData = () => {
+	// 	console.log("dsdadffddadfsdfdsadsdfdadfdsa");
+	// 	return null;
+	// };
+	componentDidMount = () => {
+		// window.addEventListener("beforeunload", this.sendData);
+		//get from database
+		// alert('44')
+		//push to redux
+	};
+	componentWillUnmount = () => {
+		// window.removeEventListener("beforeunload", this.sendData);
+		// alert('55')
+		//send to database
+	};
 	calculatePrice = () => {
 		let result = 0;
 		if (this.state.productList !== "") {
@@ -46,8 +44,9 @@ class Cart extends Component {
 		}
 		this.setState({totalPrice: result});
 	};
-    render() {
-        console.log(this.state)
+	render() {
+		console.log(this.state);
+		// this.props.addToCart(1);
 		return (
 			<div className="textS">
 				<h1
@@ -56,7 +55,7 @@ class Cart extends Component {
 				>
 					รถเข็น
 				</h1>
-				{this.state.productList.map((product, i) => {
+				{this.props.productList.map((product, i) => {
 					return (
 						<BuyProduct
 							nameOfProduct={product.name}
@@ -66,10 +65,11 @@ class Cart extends Component {
 							unitOfProduct={product.unit}
 							imgFood={เนื้อสันในวัว}
 							type="x"
-							imgType="trash"
+							// imgType="trash"
 							quantity={product.quantity}
 							match={this.props.match}
 							calculatePrice={this.calculatePrice}
+							index={i}
 						/>
 					);
 				})}
@@ -113,4 +113,18 @@ class Cart extends Component {
 	}
 }
 
-export default Cart;
+const mapStateToProps = (state) => {
+	return {
+		productList: state.addToCartReducer.productList,
+	};
+};
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addToCart: (item) => dispatch(addToCart(item)),
+		removeFromCart: (index) => dispatch(removeFromCart(index)),
+	};
+};
+export default compose(
+	connect(mapStateToProps, mapDispatchToProps),
+	withRouter
+)(Cart);
