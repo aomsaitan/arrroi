@@ -302,6 +302,7 @@ input.error {
 
 div.info {
     font-size: 1vw;
+    padding:0.2vw;
     text-align: left;
 }
 

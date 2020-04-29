@@ -11,7 +11,7 @@ class ShopPage extends Component {
 		};
 	}
 	componentDidMount = async () => {
-		// await this.importdata();
+		await this.importdata();
 	};
 	importdata = async () => {
 		let tmp = [];
