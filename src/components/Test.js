@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import firebase from "../database/firebase";
+import เนื้อสันในวัว from "../images/เนื้อสันในวัว.jpg";
+import BuyProduct from "./BuyProduct";
 
 class Test extends Component {
 	constructor(props) {
@@ -13,8 +15,9 @@ class Test extends Component {
 			product_id_menu: "",
 			menu_id: "XZzQTzEAUfKPeuZg847U",
 			menu: "",
-			cart_id: "5E5vu0dB2TYthZyDiPtu",
+			cart_id: "",
 			cartlist: "",
+			username: "sirget",
 		};
 	}
 
@@ -35,15 +38,23 @@ class Test extends Component {
 		//console.log(this.state.productlist_menu);
 		//console.log(this.state.product_id_menu);
 		//console.log(this.state.menu);
+		// await this.getcartid();
+		// console.log(this.state.cart_id);
+		// await this.get_cart();
+		// console.log(this.state.cartlist);
+	};
 
-		//await this.get_cart();
-		//console.log(this.state.cartlist);
-    };
-    
-    getcartid = async () => {
-        let query = firebase.firestore().collection("user");
-        await query.where("username","==",this.state.username).get().then
-    }
+	getcartid = async () => {
+		let query = firebase.firestore().collection("user");
+		await query
+			.where("username", "==", this.state.username)
+			.get()
+			.then((querysnapshot) => {
+				querysnapshot.forEach((documentsnapshot) => {
+					this.setState({cart_id: documentsnapshot.data().cartid});
+				});
+			});
+	};
 
 	// show product menu
 	showpdl_menu = async () => {
@@ -111,6 +122,7 @@ class Test extends Component {
 			.then((documentsnapshot) => {
 				carttmp = documentsnapshot.data().cartlist;
 			});
+		// console.log(carttmp[carttmp.length - 1].productList)
 		this.setState({
 			cartlist: carttmp[carttmp.length - 1],
 		});
@@ -164,7 +176,21 @@ class Test extends Component {
 	};
 
 	render() {
-		return <div>สวัสดีจ้า</div>;
+		return (<></>
+			// <BuyProduct
+            //     nameOfProduct="หอมหัวใหญ่"
+            //     nameFood ="หอมหัวใหญ่"
+			// 	color="brown"
+			// 	price={[1,2,3]}
+			// 	size={["250 กรัม","500 กรัม","1 กิโลกรัม"]}
+			// 	// key={i}
+			// 	quantity={500}
+            //     match={this.props.match}
+            //     used="200 กรัม"
+			// 	// calculatePrice={this.calculatePrice}
+			// 	// index={i}
+			// />
+		);
 	}
 }
 

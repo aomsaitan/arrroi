@@ -33,7 +33,7 @@ class Register extends Component {
 			[e.target.id]: data,
 		});
 	};
-	checkUsername = () => {
+	checkUsername = async () => {
 		//check username
 		let db = firebase.firestore();
 		db.collection("user")
@@ -41,21 +41,43 @@ class Register extends Component {
 			.get()
 			.then((snapshot) => {
 				snapshot.forEach((doc) => {
+					console.log(
+						"ds",
+						doc.data().username,
+						this.state.บัญชีผู้ใช้
+					);
 					if (doc.data().username === this.state.บัญชีผู้ใช้) {
 						this.setState((prevState) => {
-							let error = Object.assign({}, prevState.error);
-							error.usernameError = "บัญชีผู้ใช้นี้ถูกใช้ไปแล้ว";
-							return {error};
+							console.log(
+								this.state,
+								doc.data().username,
+								this.state.บัญชีผู้ใช้
+							);
+							return {
+								...prevState,
+								error: Object.assign({}, prevState.error, {
+									usernameError:
+										"บัญชีผู้ใช้นี้ถูกใช้งานไปแล้ว",
+								}),
+							};
 						});
 						return false;
 					}
+				});
+				this.setState((prevState) => {
+					return {
+						...prevState,
+						error: Object.assign({}, prevState.error, {
+							usernameError: "",
+						}),
+					};
 				});
 			})
 			.catch(function (error) {
 				console.log("Error getting document:", error);
 			});
 	};
-	signup = () => {
+	signup = async () => {
 		//signup (Register) add account to auth
 		console.log("debug1");
 
@@ -78,9 +100,12 @@ class Register extends Component {
 			.catch((e) => {
 				console.log(e.message);
 				this.setState((prevState) => {
-					let error = Object.assign({}, prevState.error);
-					error.emailError = e.message;
-					return {error};
+					return {
+						...prevState,
+						error: Object.assign({}, prevState.error, {
+							emailError: "อีเมลนี้ถูกใช้งานไปแล้ว",
+						}),
+					};
 				});
 			});
 	};
@@ -126,7 +151,9 @@ class Register extends Component {
 	};
 
 	process = async () => {
-		if (await this.checkUsername()) await this.signup();
+		await this.checkUsername();
+		console.log(this.state);
+		if (this.state.error.usernameError === "") await this.signup();
 	};
 
 	handleSubmit = (event) => {
@@ -181,10 +208,10 @@ class Register extends Component {
 			error.phoneError !== ""
 				? true
 				: false;
-		//Go to check with firestore
 		if (isError) {
 			return false;
 		}
+		//Go to check with firestore
 		this.process();
 		return true;
 	};

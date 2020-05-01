@@ -10,19 +10,31 @@ class Input extends Component {
 			isFocused: false,
 		};
 	}
-	addValue = () => {
-		this.setState((prevState) => ({
-			text:
-				parseInt(prevState.text) < 1000-this.props.multiplier
-					? parseInt(prevState.text) + this.props.multiplier
-					: 1000-this.props.multiplier,
-		}));
+	addValue = (event) => {
+		this.setState(
+			(prevState) => ({
+				text:
+					parseInt(prevState.text) < 1000 - this.props.multiplier
+						? parseInt(prevState.text) + this.props.multiplier
+						: 1000 - this.props.multiplier,
+			}),
+			() => {
+				this.props.pass(event, this.state.text);
+			}
+		);
 	};
-	decreaseValue = () => {
-		this.setState((prevState) => ({
-			text:
-				parseInt(prevState.text) > 0 ? parseInt(prevState.text) - this.props.multiplier : 0,
-		}));
+	decreaseValue = (event) => {
+		this.setState(
+			(prevState) => ({
+				text:
+					parseInt(prevState.text) > 0
+						? parseInt(prevState.text) - this.props.multiplier
+						: 0,
+			}),
+			() => {
+				this.props.pass(event, this.state.text);
+			}
+		);
 	};
 	handleChange = (event) => {
 		this.setState({
@@ -146,7 +158,7 @@ class Input extends Component {
 						value="+"
 						onClick={this.addValue}
 					/>
-					&nbsp; {this.props.unitOfProduct}
+					&nbsp;&nbsp;{this.props.unitOfProduct}
 				</>
 			);
 		} else if (this.props.hidden)

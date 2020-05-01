@@ -255,7 +255,7 @@ const mapStateToProps = (state) => {
 	return {
 		isLoggedIn: state.loginReducer.isLoggedIn,
 		username: state.loginReducer.username,
-		numberOfItems: state.addToCartReducer.productList.length,
+        numberOfItems: state.addToCartReducer.numberOfItems
 	};
 };
 const mapDispatchToProps = (dispatch) => {

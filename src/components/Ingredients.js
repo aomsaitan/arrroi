@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import BuyProduct from "./BuyProduct";
-import เนื้อสันในวัว from "../images/เนื้อสันในวัว.jpg";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
 import Image from "./Image";
@@ -49,8 +48,7 @@ class Ingredients extends Component {
 			productList.push({
 				...tmpmenuall[index],
 				product_id: data.product_id,
-				used: data.quantity.split(" ")[0],
-				used2: data.quantity.split(" ")[1],
+				used: data.quantity
 			});
 		});
 		this.setState({
@@ -74,19 +72,11 @@ class Ingredients extends Component {
 								key={product.product_id}
 								nameOfProduct={product.name}
 								color={i % 2 === 0 ? "brown" : "cream"}
-								price={product.price}
-								quantity={
-									product.unit === "ถุง" ||
-									product.unit === "ขวด"
-										? null
-										: parseInt(product.used)
-								}
-								unitOfProduct={product.unit}
+                                option={product.option}
 								nameFood={product.name}
 								used={product.used}
-								used2={product.used2}
-								match={this.props.match}
-								detail={product.detail}
+                                match={this.props.match}
+                                size={product.size}
 							/>
 						);
 					})}

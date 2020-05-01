@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import LoginField from "./LoginField";
 import {withRouter} from "react-router-dom";
-import {login} from "../redux/index";
+import {login, importCart} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Input from "./Input";
@@ -17,8 +17,38 @@ class Login extends Component {
 				emailError: "",
 				passwordError: "",
 			},
+			cart_id: "",
+			cart: "",
 		};
 	}
+	// getCartData = async () => {
+	// 	// this.getCartId();
+	// 	await this.getCart();
+	// };
+	getCart = async () => {
+		let query = firebase.firestore().collection("user");
+		let cart_id;
+		await query
+			.where("username", "==", this.state.username)
+			.get()
+			.then((querysnapshot) => {
+				querysnapshot.forEach((documentsnapshot) => {
+					cart_id = documentsnapshot.data().cartid;
+					this.setState({cart_id: documentsnapshot.data().cartid});
+				});
+			});
+		let carttmp = "";
+		query = firebase.firestore().collection("cart");
+		await query
+			.doc(cart_id)
+			.get()
+			.then((documentsnapshot) => {
+				carttmp = documentsnapshot.data().cartlist;
+            });
+        console.log(carttmp[carttmp.length - 1].productlist)
+        this.props.importCart(carttmp[carttmp.length - 1].productlist)
+	};
+
 	getData = (e, data, what = true) => {
 		if (what)
 			this.setState({
@@ -29,16 +59,30 @@ class Login extends Component {
 				[e.id]: data,
 			});
 	};
-
+	getUsername = async () => {
+		let query = firebase.firestore().collection("user");
+		await query
+			.where("email", "==", this.state.Email)
+			.get()
+			.then((qureysnapshot) => {
+				qureysnapshot.forEach((documentsnapshot) => {
+					this.setState({
+						username: documentsnapshot.data().username,
+					});
+				});
+			});
+	};
 	signin = () => {
 		firebase
 			.auth()
 			.signInWithEmailAndPassword(this.state.Email, this.state.Password)
-			.then((u) => {
+			.then(async (u) => {
+				await this.getUsername();
+				this.props.login(this.state.username);
+				await this.getCart();
 				this.props.history.location.state
 					? this.props.history.go(-2)
 					: this.props.history.goBack();
-				this.props.login(this.state.username);
 			})
 			.catch((e) => {
 				this.setState((prevState) => {
@@ -123,6 +167,7 @@ class Login extends Component {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		login: (username) => dispatch(login(username)),
+		importCart: (productList) => dispatch(importCart(productList)),
 	};
 };
 

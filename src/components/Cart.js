@@ -5,26 +5,22 @@ import {addToCart, removeFromCart} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
+import firebase from "../database/firebase";
 
 class Cart extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			// productList: this.props.productList,
+			productList: this.props.productList,
 			totalPrice: 0,
 			paymentStatus: false,
 		};
 	}
-	sendCart = () => {
-		//send to database
-    };
-    // storeCar
-	// sendData = () => {
-	// 	console.log("dsdadffddadfsdfdsadsdfdadfdsa");
-	// 	return null;
+	// sendCart = () => {
 	// };
-	componentDidMount = () => {
+
+	componentDidMount = async () => {
 		// window.addEventListener("beforeunload", this.sendData);
 		//get from database
 		// alert('44')
@@ -56,20 +52,19 @@ class Cart extends Component {
 					รถเข็น
 				</h1>
 				{this.props.productList.map((product, i) => {
-					return (
+                    return (
 						<BuyProduct
-							nameOfProduct={product.name}
+                            nameOfProduct={product.name}
+                            nameFood ={product.name}
 							color={i % 2 === 0 ? "brown" : "cream"}
-							price={product.price}
+                            option={product.option}
 							key={i}
-							unitOfProduct={product.unit}
-							imgFood={เนื้อสันในวัว}
-							type="x"
-							// imgType="trash"
-							quantity={product.quantity}
+                            type="x"
+                            size={product.size}
+                            used={product.used}
 							match={this.props.match}
-							calculatePrice={this.calculatePrice}
-							index={i}
+                            index={i}
+                            quantity ={product.quantity}
 						/>
 					);
 				})}
