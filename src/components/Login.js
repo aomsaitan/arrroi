@@ -44,9 +44,12 @@ class Login extends Component {
 			.get()
 			.then((documentsnapshot) => {
 				carttmp = documentsnapshot.data().cartlist;
-            });
-        console.log(carttmp[carttmp.length - 1].productlist)
-        this.props.importCart(carttmp[carttmp.length - 1].productlist)
+			});
+		console.log(carttmp[carttmp.length - 1].productlist);
+		this.props.importCart(
+			cart_id,
+			carttmp[carttmp.length - 1].productlist
+		);
 	};
 
 	getData = (e, data, what = true) => {
@@ -167,7 +170,8 @@ class Login extends Component {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		login: (username) => dispatch(login(username)),
-		importCart: (productList) => dispatch(importCart(productList)),
+		importCart: (id, productList) =>
+			dispatch(importCart(id, productList)),
 	};
 };
 

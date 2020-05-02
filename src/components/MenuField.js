@@ -11,7 +11,7 @@ class MenuField extends Component {
 				}
 			>
 				<img
-					id={this.props.nameIcon}
+					name={this.props.nameIcon}
 					alt={this.props.alt}
 					className="menu_icon"
 				/>

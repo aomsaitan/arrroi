@@ -7,43 +7,50 @@ class ShopPage extends Component {
 	constructor() {
 		super();
 		this.state = {
-			store: "",
+            storeList: "",
+            loading:true
 		};
 	}
 	componentDidMount = async () => {
 		await this.importdata();
 	};
 	importdata = async () => {
-		let tmp = [];
+        let tmp = []
 		let db = firebase.firestore();
 		await db
 			.collection("store")
 			.orderBy("star", "desc")
 			.get()
 			.then((querysnapshot) => {
-				querysnapshot.forEach((documentsnapshot) => {
-					tmp.push(documentsnapshot.data());
-				});
-				this.setState({
-					store: tmp,
+                querysnapshot.forEach((documentsnapshot) => {
+                    let x=  documentsnapshot.data()
+                    x.id = documentsnapshot.id
+                    tmp.push(x);
 				});
 			})
 			.catch(function (error) {
 				console.log("Error", error);
 			});
+            this.setState({
+                storeList: tmp,
+                loading:false
+            });
 	};
 	render() {
-		if (this.state.store !== "") {
+        if (!this.state.loading) {
+            console.log(this.state.storeList)
 			return (
 				<>
 					<h1 className="textS shop-title"> ร้านค้าแนะนำ </h1>
-					{this.state.store.map((store) => {
+					{this.state.storeList.map((store) => {
 						return (
 							<Shop
 								nameFood={store.name}
 								detail={store.detail}
 								star={store.star}
-								address={store.address}
+                                address={store.address}
+                                key={store.id}
+                                id={store.id}
 							/>
 						);
 					})}

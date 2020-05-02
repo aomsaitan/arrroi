@@ -10,14 +10,10 @@ export const loginReducer = (state = initialState, action) => {
 			return {
 				...state,
 				isLoggedIn: true,
-				username: action.username,
+				username: action.payload,
 			};
-		case LOGOUT:
-			return {
-				...state,
-				isLoggedIn: false,
-				username: action.username,
-			};
+        case LOGOUT:
+            return initialState;
 		default:
 			return state;
 	}

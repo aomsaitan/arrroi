@@ -2,17 +2,19 @@ import React, {Component} from "react";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
 import MenuField from "./MenuField";
-import Image from './Image'
+import Image from "./Image";
 class MenuDetails extends Component {
 	constructor(props) {
 		super(props);
+		console.log("dfsdafsfsff");
 		this.state = {
-			name: this.props.match.params.name, //ชื่อเมนูอาหาร เช่น กุ้งคั่วกระเทียมพริก จาก url
+			id: this.props.match.params.id, //ชื่อเมนูอาหาร เช่น กุ้งคั่วกระเทียมพริก จาก url
 			multiplier: "", //สำหรับใส่จำนวนที่
 			ingredientsList: "", //สำหรับใส่ list ส่วนผสม
 			stepsList: "", //สำหรับใส่ list วิธีการทำอาหาร
 			temp: "",
-			loading: true,
+            loading: true,
+            name:""
 		};
 	}
 
@@ -57,16 +59,14 @@ class MenuDetails extends Component {
 		let db = firebase.firestore();
 		await db
 			.collection("menu")
-			.where("name", "==", this.state.name)
-			.limit(1)
+			.doc(this.state.id)
 			.get()
-			.then((querysnapshot) => {
-				querysnapshot.forEach((documentsnapshot) => {
-					this.setState({
-						multiplier: documentsnapshot.data().multiplier,
-						ingredientsList: documentsnapshot.data().productList,
-						stepsList: documentsnapshot.data().howto,
-					});
+			.then((documentsnapshot) => {
+                this.setState({
+                    name:documentsnapshot.data().name,
+					multiplier: documentsnapshot.data().multiplier,
+					ingredientsList: documentsnapshot.data().productList,
+					stepsList: documentsnapshot.data().howto,
 				});
 			});
 	};
@@ -77,7 +77,11 @@ class MenuDetails extends Component {
 				<div className="textS" style={{fontSize: "1.5vw"}}>
 					<h1 className="menu-title">{this.state.name}</h1>
 					{/* //////////////////////////////////////////ส่วนจำนวนที่/////////////////////////////////////// */}
-                    <Image alt="background" className="BG" nameFood={this.state.name}/>
+					<Image
+						alt="background"
+						className="BG"
+						nameFood={this.state.name}
+					/>
 					<MenuField
 						type="mulitplier"
 						multiplier={this.state.multiplier}
@@ -114,12 +118,8 @@ class MenuDetails extends Component {
 						})}
 					</div>
 					{/* //////////////////////////////////////////วิธีทำตั่งต่าง ๆ////////////////////////////////////// */}
-                    
-					<MenuField
-						type="step"
-						nameIcon="mix"
-						alt="steps"
-					/>
+
+					<MenuField type="step" nameIcon="mix" alt="steps" />
 					{this.state.stepsList.map((step, i) => {
 						return (
 							<div className="steps" key={i}>

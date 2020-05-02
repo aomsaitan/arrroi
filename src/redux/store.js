@@ -2,10 +2,21 @@ import {createStore, applyMiddleware} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
 import rootReducer from "./index";
 import logger from "redux-logger";
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+const persistConfig = {
+    key: 'root',
+    storage,
+    // blacklist: ['loginReducer','addTocartReducer','totalPrice','productList','id']
+}
+const persistedReducer = persistReducer(persistConfig,rootReducer)
 
-const store = createStore(
-	rootReducer,
-	composeWithDevTools(applyMiddleware(logger))
-	// process.env.NODE_ENV !== 'production' ? composeWithDevTools(applyMiddleware (thunk)) : applyMiddleware (thunk)
-);
-export default store;
+export default () => {
+    let store = createStore(
+        persistedReducer,
+        composeWithDevTools(applyMiddleware(logger))
+        // process.env.NODE_ENV !== 'production' ? composeWithDevTools(applyMiddleware (thunk)) : applyMiddleware (thunk)
+    );
+    let persistor = persistStore(store)
+    return {store,persistor}
+};

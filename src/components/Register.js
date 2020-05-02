@@ -4,10 +4,12 @@ import Input from "./Input";
 import information from "../images/information.png";
 import {withRouter} from "react-router-dom";
 import firebase from "../database/firebase";
+import Loading from "./Loading";
 class Register extends Component {
 	constructor() {
 		super();
 		this.state = {
+			isError: true,
 			ชื่อจริง: "",
 			นามสกุล: "",
 			อีเมล: "",
@@ -26,33 +28,29 @@ class Register extends Component {
 				confirmError: "",
 				phoneError: "",
 			},
+			loading: false,
 		};
 	}
+
 	getData = (e, data) => {
 		this.setState({
 			[e.target.id]: data,
 		});
 	};
+
 	checkUsername = async () => {
-		//check username
 		let db = firebase.firestore();
-		db.collection("user")
+		let tmpdata = "";
+		await db
+			.collection("user")
 			.where("username", "==", this.state.บัญชีผู้ใช้)
+			.limit(1)
 			.get()
 			.then((snapshot) => {
 				snapshot.forEach((doc) => {
-					console.log(
-						"ds",
-						doc.data().username,
-						this.state.บัญชีผู้ใช้
-					);
-					if (doc.data().username === this.state.บัญชีผู้ใช้) {
+					tmpdata = doc.data().username;
+					if (tmpdata === this.state.บัญชีผู้ใช้) {
 						this.setState((prevState) => {
-							console.log(
-								this.state,
-								doc.data().username,
-								this.state.บัญชีผู้ใช้
-							);
 							return {
 								...prevState,
 								error: Object.assign({}, prevState.error, {
@@ -61,26 +59,26 @@ class Register extends Component {
 								}),
 							};
 						});
-						return false;
 					}
 				});
-				this.setState((prevState) => {
-					return {
-						...prevState,
-						error: Object.assign({}, prevState.error, {
-							usernameError: "",
-						}),
-					};
-				});
+				if (tmpdata === "") {
+					this.setState((prevState) => {
+						return {
+							...prevState,
+							error: Object.assign({}, prevState.error, {
+								usernameError: "",
+							}),
+						};
+					});
+				}
 			})
 			.catch(function (error) {
 				console.log("Error getting document:", error);
 			});
 	};
+
 	signup = async () => {
 		//signup (Register) add account to auth
-		console.log("debug1");
-
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(
@@ -109,9 +107,9 @@ class Register extends Component {
 				});
 			});
 	};
+
 	addCartToFirestore = async () => {
 		let db = firebase.firestore().collection("cart").doc();
-		console.log(db.id);
 		await db
 			.set({
 				cartlist: [
@@ -150,18 +148,13 @@ class Register extends Component {
 			});
 	};
 
-	process = async () => {
-		await this.checkUsername();
-		console.log(this.state);
-		if (this.state.error.usernameError === "") await this.signup();
-	};
-
-	handleSubmit = (event) => {
+	checkerror = async () => {
 		let error = this.state.error;
-		let isError = false;
-		event.preventDefault();
-		error.usernameError =
-			this.state.บัญชีผู้ใช้ === "" ? "กรุณากรอกบัญชีผู้ใช้" : "";
+
+		if (this.state.บัญชีผู้ใช้ === "") {
+			error.usernameError = "กรุณากรอกบัญชีผู้ใช้";
+		}
+
 		error.passwordError =
 			this.state.รหัสผ่าน === ""
 				? "กรุณากรอกรหัสผ่าน"
@@ -196,7 +189,15 @@ class Register extends Component {
 				  this.state.เบอร์โทรศัพท์.charAt(0) === "0"
 				? ""
 				: "เบอร์โทรศัพท์ไม่ถูกต้อง";
-		this.setState({error});
+
+		this.setState({
+			error: error,
+		});
+	};
+
+	aftercheck = async () => {
+		let error = this.state.error;
+		let isError = true;
 		isError =
 			error.usernameError !== "" ||
 			error.passwordError !== "" ||
@@ -208,16 +209,31 @@ class Register extends Component {
 			error.phoneError !== ""
 				? true
 				: false;
-		if (isError) {
-			return false;
-		}
-		//Go to check with firestore
-		this.process();
-		return true;
+		this.setState({
+			isError: isError,
+		});
 	};
+
+	handleSubmit = async (event) => {
+		this.setState({loading: true});
+		event.preventDefault();
+
+		await this.checkUsername();
+		await this.checkerror();
+		await this.aftercheck();
+		if (!this.state.isError) {
+			await this.signup();
+		}
+
+		this.setState({loading: false});
+		console.log(this.state.error);
+		console.log(this.state.isError);
+	};
+
 	render() {
 		return (
 			<div className="horizontal-center textS">
+				{this.state.loading ? <Loading /> : null}
 				<p className="title">Register</p>
 				<div
 					style={{

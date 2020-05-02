@@ -5,19 +5,52 @@ import MenuList from "./MenuList";
 import RegionalMenu from "./RegionalMenu";
 import Slideshow from "./Slideshow";
 import Loading from "./Loading";
+import {firestore} from "firebase";
 class MenuPage extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			menuList: "",
+			recommend: [],
 		};
 	}
 
 	componentDidMount = async () => {
+		await this.importRecommend();
 		await this.importdata();
 	};
-
+	importRecommend = async () => {
+		let tmp = [];
+		let query = firebase.firestore();
+		await query
+			.collection("recommended_menu")
+			.get()
+			.then( (querysnapshot) => {
+				querysnapshot.forEach((documentsnapshot) => {
+					console.log(documentsnapshot.data());
+					let x = documentsnapshot.data().recommendlist;
+					 x.forEach(async (id) => {
+						await firebase
+							.firestore()
+							.collection("menu")
+							.doc(id)
+							.get()
+                            .then(async (x) => {
+                                tmp.push(x.data().name)
+							})
+							.catch(function (error) {
+								console.log("Error", error);
+							});
+					});
+				});
+			})
+			.catch(function (error) {
+				console.log("Error", error);
+			});
+            console.log('dfsffffffaf',tmp)
+		this.setState({recommend:tmp})
+	};
 	importdata = async () => {
 		let tmp = [];
 		let db = firebase.firestore();
@@ -26,53 +59,66 @@ class MenuPage extends Component {
 			.get()
 			.then((querysnapshot) => {
 				querysnapshot.forEach((documentsnapshot) => {
-                    tmp.push({id:documentsnapshot.id,name: documentsnapshot.data().name});
+					tmp.push({
+						id: documentsnapshot.id,
+						name: documentsnapshot.data().name,
+					});
 				});
 			})
 			.catch(function (error) {
 				console.log("Error", error);
-            });
-        this.setState({
-            menuList:tmp
-        })
+			});
+		await this.setState({
+			menuList: tmp,
+		});
 	};
+	// getImageFood(image) {
 
-    render() {
-        console.log(this.state.menuList)
-		if (this.state.menuList !== "")
-		return (
-			<div className="column-flex menu-page">
-				<h1 className="menuPage_title">เมนูแนะนำ</h1>
-				<Slideshow images={[ข้าวผัดกุ้ง]} />
-				<div className="row-flex region-container">
-					<RegionalMenu
-						src={ข้าวผัดกุ้ง}
-						alt="ข้าวผัดกุ้ง"
-						title="อาหารเหนือ"
-					/>
-					<RegionalMenu
-						src={ข้าวผัดกุ้ง}
-						alt="ข้าวผัดกุ้ง"
-						title="อาหารอีสาน"
-					/>
-					<RegionalMenu
-						src={ข้าวผัดกุ้ง}
-						alt="ข้าวผัดกุ้ง"
-						title="อาหารกลาง"
-					/>
-					<RegionalMenu
-						src={ข้าวผัดกุ้ง}
-						alt="ข้าวผัดกุ้ง"
-						title="อาหารใต้"
-					/>
-				</div>
-				<div className="column-flex">
-					{this.state.menuList.map((menu) => {
-                        return <MenuList  key={menu.id}src={ข้าวผัดกุ้ง} alt={menu.name} menu={menu.name}/>;
+	// }
+	render() {
+		console.log(this.state.recommend);
+		if (this.state.menuList !== "" && this.state.recommend !== "")
+			return (
+				<div className="column-flex menu-page">
+					<h1 className="menuPage_title textS">เมนูแนะนำ</h1>
+					<Slideshow nameFood={this.state.recommend} />
+					<div className="row-flex region-container">
+						<RegionalMenu
+							src={ข้าวผัดกุ้ง}
+							alt="ข้าวผัดกุ้ง"
+							title="อาหารเหนือ"
+						/>
+						<RegionalMenu
+							src={ข้าวผัดกุ้ง}
+							alt="ข้าวผัดกุ้ง"
+							title="อาหารอีสาน"
+						/>
+						<RegionalMenu
+							src={ข้าวผัดกุ้ง}
+							alt="ข้าวผัดกุ้ง"
+							title="อาหารกลาง"
+						/>
+						<RegionalMenu
+							src={ข้าวผัดกุ้ง}
+							alt="ข้าวผัดกุ้ง"
+							title="อาหารใต้"
+						/>
+					</div>
+					<div className="column-flex">
+						{this.state.menuList.map((menu) => {
+							return (
+								<MenuList
+									key={menu.id}
+									src={ข้าวผัดกุ้ง}
+									alt={menu.name}
+									menu={menu.name}
+									id={menu.id}
+								/>
+							);
 						})}
+					</div>
 				</div>
-			</div>
-		);
+			);
 		else return <Loading />;
 	}
 }

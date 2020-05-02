@@ -1,25 +1,36 @@
 import React, {Component} from "react";
 import {Tooltip as Tippy} from "react-tippy";
+import {updateCart} from "../redux/index";
+import {connect} from "react-redux";
 
 class Input extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			text: props.default,
+			text: this.props.default,
 			open: false,
 			isFocused: false,
 		};
 	}
 	addValue = (event) => {
+		// updateCart(index,value,type)
 		this.setState(
 			(prevState) => ({
 				text:
-					parseInt(prevState.text) < 1000 - this.props.multiplier
-						? parseInt(prevState.text) + this.props.multiplier
-						: 1000 - this.props.multiplier,
+					parseInt(prevState.text) < 999
+						? parseInt(prevState.text) + 1
+						: 999,
 			}),
 			() => {
+				// this.props.
 				this.props.pass(event, this.state.text);
+				console.log(this.props.id);
+				if (this.props.id.split(" ").length > 2)
+					this.props.updateCart(
+						this.props.index,
+						this.state.text,
+						this.props.size
+					);
 			}
 		);
 	};
@@ -27,12 +38,22 @@ class Input extends Component {
 		this.setState(
 			(prevState) => ({
 				text:
-					parseInt(prevState.text) > 0
-						? parseInt(prevState.text) - this.props.multiplier
+					parseInt(prevState.text) >
+					(this.props.id.includes("button") ? 1 : 0)
+						? parseInt(prevState.text) - 1
+						: this.props.id.includes("button")
+						? 1
 						: 0,
 			}),
 			() => {
 				this.props.pass(event, this.state.text);
+				console.log(this.props);
+				if (this.props.id.split(" ").length > 2)
+					this.props.updateCart(
+						this.props.index,
+						this.state.text,
+						this.props.size
+					);
 			}
 		);
 	};
@@ -40,7 +61,25 @@ class Input extends Component {
 		this.setState({
 			text: event.target.value,
 		});
-		this.props.pass(event, event.target.value);
+		if (event.target.id.includes("button")) {
+			console.log(event.target.value);
+			if (
+				event.target.value === "" ||
+				parseInt(event.target.value) === 0
+			) {
+				event.target.value = 1;
+			}
+			this.setState({
+				text: event.target.value,
+			});
+			this.props.pass(event, parseInt(event.target.value));
+			if (this.props.id.split(" ").length > 2)
+				this.props.updateCart(
+					this.props.index,
+					this.state.text,
+					this.props.size
+				);
+		} else this.props.pass(event, event.target.value);
 	};
 	handleClick = (event) => {
 		let x = document.getElementById("Password");
@@ -62,48 +101,64 @@ class Input extends Component {
 		}
 	};
 	checkInput = (event) => {
-		switch (event.target.id) {
-			case "Password":
-			case "รหัสผ่าน":
-			case "ยืนยันรหัสผ่าน":
-				if (!/[0-9A-Za-z]+/g.test(event.key)) event.preventDefault();
-				break;
-			case "บัญชีผู้ใช้":
-				if (!/[\w]+/g.test(event.key)) event.preventDefault();
-				break;
-			case "Email":
-			case "อีเมล":
-				if (
-					!/[A-Za-z0-9!#$%&"'*+-/=?^_`{|}~(),:;<>@[\].]+/g.test(
-						event.key
+		if (this.props.id.includes("button")) {
+			if (
+				!/[\d]+/g.test(event.key) &&
+				event.key !== "ArrowLeft" &&
+				event.key !== "ArrowRight" &&
+				event.key !== "Backspace" &&
+				event.key !== "Tab" &&
+				event.key !== "Enter" &&
+				event.key !== "Delete"
+			) {
+				event.preventDefault();
+			}
+		} else {
+			switch (event.target.id) {
+				case "Password":
+				case "รหัสผ่าน":
+				case "ยืนยันรหัสผ่าน":
+					if (!/[0-9A-Za-z]+/g.test(event.key))
+						event.preventDefault();
+					break;
+				case "บัญชีผู้ใช้":
+					if (!/[\w]+/g.test(event.key)) event.preventDefault();
+					break;
+				case "Email":
+				case "อีเมล":
+					if (
+						!/[A-Za-z0-9!#$%&"'*+-/=?^_`{|}~(),:;<>@[\].]+/g.test(
+							event.key
+						)
 					)
-				)
-					event.preventDefault();
-				break;
-			case "เบอร์โทรศัพท์":
-			case "button":
-				if (
-					!/[\d]+/g.test(event.key) &&
-					event.key !== "ArrowLeft" &&
-					event.key !== "ArrowRight" &&
-					event.key !== "Backspace" &&
-					event.key !== "Tab" &&
-					event.key !== "Enter" &&
-					event.key !== "Delete"
-				)
-					event.preventDefault();
-				break;
-			case "ที่อยู่":
-				if (
-					!/[\u0E00-\u0E7F0-9A-Za-z\s\./]+/g.test(event.key) ||
-					event.key === "Enter"
-				)
-					event.preventDefault();
-				break;
-			default:
-				if (!/[\u0E00-\u0E7FA-Za-z]+/g.test(event.key))
-					event.preventDefault();
-				break;
+						event.preventDefault();
+					break;
+				case "เบอร์โทรศัพท์":
+					// case (event.targ/('daffdsdaaf')
+					if (
+						!/[\d]+/g.test(event.key) &&
+						event.key !== "ArrowLeft" &&
+						event.key !== "ArrowRight" &&
+						event.key !== "Backspace" &&
+						event.key !== "Tab" &&
+						event.key !== "Enter" &&
+						event.key !== "Delete"
+					)
+						// console.log('dadfsffs',event.key)
+						event.preventDefault();
+					break;
+				case "ที่อยู่":
+					if (
+						!/[\u0E00-\u0E7F0-9A-Za-z\s\./]+/g.test(event.key) ||
+						event.key === "Enter"
+					)
+						event.preventDefault();
+					break;
+				default:
+					if (!/[\u0E00-\u0E7FA-Za-z]+/g.test(event.key))
+						event.preventDefault();
+					break;
+			}
 		}
 	};
 
@@ -129,7 +184,7 @@ class Input extends Component {
 					placeholder={this.props.placeholder}
 				/>
 			);
-		else if (this.props.id === "button") {
+		else if (this.props.id.includes("button")) {
 			return (
 				<>
 					<input
@@ -244,4 +299,10 @@ class Input extends Component {
 	}
 }
 
-export default Input;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		updateCart: (index, value,  size) =>
+			dispatch(updateCart(index, value, size)),
+	};
+};
+export default connect(null, mapDispatchToProps)(Input);

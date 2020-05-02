@@ -8,6 +8,8 @@ import {logout} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import NavbarList from "./NavbarList";
+import {clearAll} from '../redux/index'
+import firebase from '../database/firebase'
 class Navbar extends Component {
 	showDropdown = () => {
 		let x = document.getElementById("dropdown");
@@ -24,7 +26,22 @@ class Navbar extends Component {
 		} else {
 			x.className = "dropdown-block";
 		}
-	};
+    };
+    sendCartData = async() => {
+        let query = firebase.firestore().collection("cart");
+        let carttmp;
+		await query
+			.doc(this.props.cart_id)
+			.get()
+			.then((documentsnapshot) => {
+				carttmp = documentsnapshot.data().cartlist;
+            });
+        carttmp[carttmp.length-1].productlist = this.props.productList       
+        await query.doc(this.props.cart_id).set({ cartlist: carttmp });
+        this.props.logout();
+        this.props.clearAll();
+        this.props.history.push('/login')
+    }
 	render() {
 		return (
 			<div className="row-flex navbar textM">
@@ -133,7 +150,7 @@ class Navbar extends Component {
 							style={{left: "76.5vw", width: "13vw"}}
 						>
 							<NavbarList
-								to="/about"
+								to={"/"+this.props.username+'/orders'}
 								name="การซื้อของฉัน"
 								style={{
 									marginTop: "-0.5vw",
@@ -171,8 +188,8 @@ class Navbar extends Component {
 									textIndent: "1.5vw",
 									cursor: "pointer",
 								}}
-								onClick={() => {
-									this.props.logout();
+                                onClick={() => {
+                                    this.sendCartData();
 								}}
 							>
 								Log out
@@ -255,12 +272,15 @@ const mapStateToProps = (state) => {
 	return {
 		isLoggedIn: state.loginReducer.isLoggedIn,
 		username: state.loginReducer.username,
-        numberOfItems: state.addToCartReducer.numberOfItems
+        numberOfItems: state.addToCartReducer.numberOfItems,
+        cart_id: state.addToCartReducer.id,
+        productList: state.addToCartReducer.productList
 	};
 };
 const mapDispatchToProps = (dispatch) => {
 	return {
-		logout: () => dispatch(logout()),
+        logout: () => dispatch(logout()),
+        clearAll:()=>dispatch(clearAll())
 	};
 };
 export default compose(

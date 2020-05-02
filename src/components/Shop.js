@@ -5,11 +5,11 @@ class Shop extends Component {
 	render() {
 		return (
 			<div className="shop">
-				<Link className ="link" to = {"/shop/" + this.props.nameFood}>
+				<Link className ="link" to = {"/shop/id=" + this.props.id}>
 					<div className="shop-box textS"> {this.props.nameFood}</div>
 					<div className="cover">
 						<img
-							id={this.props.nameFood}
+							name={this.props.nameFood}
 							alt={this.props.nameFood}
 						/>
 					</div>

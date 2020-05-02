@@ -1,17 +1,19 @@
 import React, {Component} from "react";
 import getImage from "../database/getImage";
 import Input from "./Input";
-import {addToCart} from "../redux/index";
+import {addToCart, removeFromCart} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
+import Image from "./Image";
+import {updateCart} from "../redux/index";
+import {withRouter} from "react-router-dom";
 
 class BuyProduct extends Component {
 	constructor(props) {
 		super(props);
-		// console.log(this.props.option[0].size)
 		this.state = {
 			size_name: this.props.option[0].size,
-			quantity: this.props.quantity ? this.props.quantity:1,
+			quantity: this.props.quantity ? this.props.quantity : 1,
 			size: this.props.size
 				? this.props.option.findIndex(
 						(item) => item.size === this.props.size
@@ -25,39 +27,48 @@ class BuyProduct extends Component {
 		});
 	};
 	addItem = () => {
-		let product = {
-			name: this.props.nameOfProduct,
-			size: this.state.size_name,
-			price:
-				this.props.option[this.state.size].price * this.state.quantity,
-			quantity: parseInt(this.state.quantity),
-			option: this.props.option,
-		};
-		console.log(product);
-		this.props.addToCart(product);
+		if (this.props.isLoggedIn) {
+			let product = {
+				name: this.props.nameOfProduct,
+				size: this.state.size_name,
+				price:
+					this.props.option[this.state.size].price *
+					this.state.quantity,
+				quantity: parseInt(this.state.quantity),
+				option: this.props.option,
+				id: this.props.id + " " + this.props.numberOfItems,
+			};
+			console.log(product);
+			this.props.addToCart(product);
+		} else this.props.history.push("/login");
 	};
 	componentDidMount = () => {
-		let x = document.getElementsByName("radio " + this.props.nameOfProduct);
-		// console.log(x)
+		let x = document.getElementsByName("radio " + this.props.id);
 		x[this.state.size].checked = "checked";
-		// console.log('fuck you')
 	};
 	setSize = () => {
-		let x = document.getElementsByName("radio " + this.props.nameOfProduct);
-		// console.log("sdfdaddfsdfs", x);
+		let x = document.getElementsByName("radio " + this.props.id);
 		for (let i = 0; i < x.length; i++) {
-			// console.log("111111111", x[i].checked,i);
 			if (x[i].checked) {
-				this.setState((prevState) => ({
-					...prevState,
-					size: i,
-					size_name: this.props.option[i].size,
-				}));
+				this.setState(
+					(prevState) => ({
+						...prevState,
+						size: i,
+						size_name: this.props.option[i].size,
+					}),
+					() => {
+						if (this.props.id.split(" ").length > 1)
+							this.props.updateCart(
+								this.props.index,
+								this.state.quantity,
+								this.state.size
+							);
+					}
+				);
 			}
 		}
 	};
 	render() {
-		// console.log(this.state);
 		return (
 			<div
 				className="storeBox textS"
@@ -70,6 +81,7 @@ class BuyProduct extends Component {
 				<img
 					className="imgFood"
 					id={this.props.nameOfProduct}
+					name={this.props.nameOfProduct}
 					alt={this.props.nameOfProduct}
 				/>
 
@@ -99,12 +111,10 @@ class BuyProduct extends Component {
 						<span>ปริมาณ</span>
 						{this.props.option.map((option, i) => {
 							return (
-								<label key={i}>
+								<label key={this.props.id + " " + i}>
 									<input
 										type="radio"
-										name={
-											"radio " + this.props.nameOfProduct
-										}
+										name={"radio " + this.props.id}
 										onChange={this.setSize}
 										className="radio"
 									/>
@@ -116,25 +126,28 @@ class BuyProduct extends Component {
 					<label htmlFor="button">จำนวน</label>&nbsp;&nbsp;
 					<Input
 						pass={this.getData}
-						id="button"
-						default={this.props.quantity?this.props.quantity:1}
+						id={"button " + this.props.id}
+						default={this.props.quantity ? this.props.quantity : 1}
 						maxLength="3"
-						multiplier={
-							this.props.unitOfProduct === "กรัม" ? 50 : 1
-						}
+						index={this.props.index}
+						size={this.state.size}
 					/>
-					{/* หน่วย */}
-					{/* {this.props.unitOfProduct} */}
 					{this.props.type === "x" ? (
-						<img
-							style={{
-								width: "2.3vw",
-								float: "right",
-								cursor: "pointer",
-							}}
-							src="https://firebasestorage.googleapis.com/v0/b/ingredient-cfs.appspot.com/o/Icon%2Ftrash.png?alt=media&token=c7d589fa-b416-40b3-9522-5ba740170e14"
-							alt="trash"
-						/>
+						<div>
+							<Image
+								style={{
+									width: "2.3vw",
+									float: "right",
+									cursor: "pointer",
+									margin: "1vw 0 1.5vw 0",
+								}}
+								nameIcon="trash"
+								alt="trash"
+								onClick={() => {
+									this.props.removeFromCart(this.props.index);
+								}}
+							/>
+						</div>
 					) : (
 						<button
 							className="addToCartButton textS"
@@ -146,9 +159,9 @@ class BuyProduct extends Component {
 							}
 							onClick={this.addItem}
 						>
-							<img
+							<Image
 								className="cartImg"
-								src="https://firebasestorage.googleapis.com/v0/b/ingredient-cfs.appspot.com/o/Icon%2FcartW.png?alt=media&token=ed4b4811-80bf-4c4a-adb5-8a7dff0f0bbd"
+								nameIcon="cartW"
 								alt="shopping_cart"
 							/>
 							<span style={{position: "relative", top: "-0.9vw"}}>
@@ -161,9 +174,22 @@ class BuyProduct extends Component {
 		);
 	}
 }
+const mapStateToProps = (state) => {
+	return {
+		numberOfItems: state.addToCartReducer.numberOfItems,
+		isLoggedIn: state.loginReducer.isLoggedIn,
+	};
+};
 const mapDispatchToProps = (dispatch) => {
 	return {
 		addToCart: (item) => dispatch(addToCart(item)),
+		removeFromCart: (id) => dispatch(removeFromCart(id)),
+		updateCart: (index, value, size) =>
+			dispatch(updateCart(index, value, size)),
 	};
 };
-export default compose(connect(null, mapDispatchToProps), getImage)(BuyProduct);
+export default compose(
+	connect(mapStateToProps, mapDispatchToProps),
+	getImage,
+	withRouter
+)(BuyProduct);
