@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import LoginField from "./LoginField";
 import {withRouter} from "react-router-dom";
-import {login, importCart} from "../redux/index";
+import {login, importCart,updateNotification,finish} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Input from "./Input";
@@ -18,14 +18,10 @@ class Login extends Component {
 				passwordError: "",
 			},
 			cart_id: "",
-            cart: "",
-            noti_id:""
+			cart: "",
+			noti_id: "",
 		};
 	}
-	// getCartData = async () => {
-	// 	// this.getCartId();
-	// 	await this.getCart();
-	// };
 	getCart = async () => {
 		let query = firebase.firestore().collection("user");
 		let cart_id;
@@ -46,11 +42,8 @@ class Login extends Component {
 			.then((documentsnapshot) => {
 				carttmp = documentsnapshot.data().cartlist;
 			});
-		console.log(carttmp[carttmp.length - 1].productlist);
-		this.props.importCart(
-			cart_id,
-			carttmp[carttmp.length - 1].productlist
-		);
+		this.props.importCart(cart_id, carttmp[carttmp.length - 1].productlist);
+		this.props.login(this.state.username);
 	};
 
 	getData = (e, data, what = true) => {
@@ -67,13 +60,32 @@ class Login extends Component {
 		let query = firebase.firestore().collection("user");
 		await query
 			.where("email", "==", this.state.Email)
+			.limit(1)
 			.get()
 			.then((querysnapshot) => {
 				querysnapshot.forEach((documentsnapshot) => {
-					this.setState({
-                        username: documentsnapshot.data().username,
-					});
+					this.setState({username: documentsnapshot.data().username});
 				});
+			});
+	};
+	getNotification = async () => {
+		let query = firebase.firestore();
+		await query
+			.collection("notification")
+			.where("username", "==", this.state.username)
+			.limit(1)
+			.get()
+			.then((querysnapshot) => {
+				console.log("fddssss", querysnapshot);
+				querysnapshot.forEach((documentsnapshot) => {
+					this.props.updateNotification(
+						documentsnapshot.data().notification_list.length
+                    );
+                    this.props.finish()
+				});
+			})
+			.catch(function (error) {
+				console.log("Error", error);
 			});
 	};
 	signin = () => {
@@ -82,11 +94,8 @@ class Login extends Component {
 			.signInWithEmailAndPassword(this.state.Email, this.state.Password)
 			.then(async (u) => {
 				await this.getUsername();
-				this.props.login(this.state.username,this.state.noti_id);
+				await this.getNotification();
 				await this.getCart();
-				this.props.history.location.state
-					? this.props.history.go(-2)
-					: this.props.history.goBack();
 			})
 			.catch((e) => {
 				this.setState((prevState) => {
@@ -117,63 +126,86 @@ class Login extends Component {
 	};
 
 	render() {
-		console.log(this.props.history);
-		return (
-			<div className="horizontal-center textS">
-				<p className="title">Log in</p>
-				<form
-					id="login"
-					className="form-login-center"
-					onSubmit={this.handleSubmit}
-					autoComplete="off"
-				>
-					<LoginField id="Email">
-						<Input
-							id="Email"
-							pass={this.getData}
-							position="right"
-							disabled={this.state.error.emailError === ""}
-							maxLength="25"
-							display={this.state.error.emailError}
-							type="text"
-							style={{top: "-2.8vw", left: "37.6vw"}}
-							default=""
-						/>
-					</LoginField>
-					<LoginField id="Password">
-						<Input
-							id="Password"
-							pass={this.getData}
-							disabled={this.state.error.passwordError === ""}
-							display={this.state.error.passwordError}
-							position="right"
-							maxLength="30"
-							type="password"
-							style={{top: "-3.3vw", left: "37vw"}}
-							default=""
-						/>
-					</LoginField>
-				</form>
-				<button
-					className="textS login"
-					onClick={() => this.props.history.push("/register")}
-				>
-					Register
-				</button>
-				<button className="textS login" type="submit" form="login">
-					Log in
-				</button>
-			</div>
-		);
+		if (!this.props.isLoggedIn) {
+			return (
+				<div className="horizontal-center textS">
+					<p className="title">Log in</p>
+					<form
+						id="login"
+						className="form-login-center"
+						onSubmit={this.handleSubmit}
+						autoComplete="off"
+					>
+						<LoginField id="Email">
+							<Input
+								id="Email"
+								pass={this.getData}
+								position="right"
+								disabled={this.state.error.emailError === ""}
+								maxLength="25"
+								display={this.state.error.emailError}
+								type="text"
+								style={{top: "-2.8vw", left: "37.6vw"}}
+								default=""
+							/>
+						</LoginField>
+						<LoginField id="Password">
+							<Input
+								id="Password"
+								pass={this.getData}
+								disabled={this.state.error.passwordError === ""}
+								display={this.state.error.passwordError}
+								position="right"
+								maxLength="30"
+								type="password"
+								style={{top: "-3.3vw", left: "37vw"}}
+								default=""
+							/>
+						</LoginField>
+					</form>
+					<button
+						className="textS login"
+						onClick={() => this.props.history.push("/register")}
+					>
+						Register
+					</button>
+					<button className="textS login" type="submit" form="login">
+						Log in
+					</button>
+				</div>
+			);
+		} else {
+			if (
+				this.props.history.location.state &&
+				(this.props.history.location.state.includes("menu") ||
+					this.props.history.location.state.includes(
+						this.props.username
+					) ||
+					this.props.history.location.state.includes("shop"))
+			) {
+				this.props.history.goBack();
+			} else {
+				this.props.history.push("/home");
+			}
+			return null;
+		}
 	}
 }
-
+const mapStateToProps = (state) => {
+	return {
+		isLoggedIn: state.loginReducer.isLoggedIn,
+	};
+};
 const mapDispatchToProps = (dispatch) => {
 	return {
 		login: (username) => dispatch(login(username)),
-		importCart: (id, productList) =>
-			dispatch(importCart(id, productList)),
+		importCart: (id, productList) => dispatch(importCart(id, productList)),
+        updateNotification: (length) => dispatch(updateNotification(length)),
+        finish: ()=> dispatch(finish())
 	};
 };
 
-export default compose(connect(null, mapDispatchToProps), withRouter)(Login);
+export default compose(
+	connect(mapStateToProps, mapDispatchToProps),
+	withRouter
+)(Login);

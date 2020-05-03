@@ -11,13 +11,13 @@ class Cart extends Component {
 	constructor(props) {
 		super(props);
 
+        window.scrollTo(0, 0)
 		this.state = {
-			// productList: this.props.productList,
-			// totalPrice: 0,
-			// paymentStatus: false,
 		};
 	}
-
+    componentDidMount = () => {        
+        window.scrollTo(0,0)
+    }
 	render() {
 		if (this.props.isLoggedIn)
 			if (parseInt(this.props.numberOfItems) !== 0)
@@ -81,8 +81,8 @@ class Cart extends Component {
 								className="row-flex"
 								style={{marginBottom: "0.75vw"}}
 							>
-								<div style={{width: "30%"}}>ยอดรวมทั้งสิ้น</div>
-								<div style={{textAlign: "right", width: "15%"}}>
+								<div style={{width: "30%",color:'red'}}>ยอดรวมทั้งสิ้น</div>
+								<div style={{textAlign: "right", width: "15%",color:'red'}}>
 									{parseInt(this.props.totalPrice) + 50}
 									&nbsp;บาท
 								</div>
@@ -90,7 +90,7 @@ class Cart extends Component {
 						</div>
 						<button
 							className="textS login"
-							style={{position: "relative", left: "70vw"}}
+							style={{position: "relative", left: "70vw",marginBottom:'2vw'}}
 							onClick={() => {
 								this.props.history.push(
 									"/" + this.props.username + "/cart/payment"

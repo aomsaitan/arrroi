@@ -7,6 +7,7 @@ import {compose} from "redux";
 import Image from "./Image";
 import {updateCart} from "../redux/index";
 import {withRouter} from "react-router-dom";
+import {toast} from "react-toastify";
 
 class BuyProduct extends Component {
 	constructor(props) {
@@ -40,6 +41,21 @@ class BuyProduct extends Component {
 			};
 			console.log(product);
 			this.props.addToCart(product);
+			toast.info(
+				<span >
+					คุณได้เพิ่ม&nbsp;
+					<span style={{color: "white"}}>
+						[{this.props.nameOfProduct}]
+					</span>
+					&nbsp;เข้ารถเข็นแล้ว
+				</span>,
+				{
+					position: toast.POSITION.TOP_RIGHT,
+					autoClose: 2000,
+					pauseOnFocusLoss: false,
+					closeButton: true,
+				}
+			);
 		} else this.props.history.push("/login");
 	};
 	componentDidMount = () => {

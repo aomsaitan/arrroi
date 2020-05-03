@@ -12,9 +12,14 @@ class OrderDetails extends Component {
 	constructor(props) {
 		super(props);
 
+        // window.scrollTo(0, 0)
 		this.state = {userDetail: ""};
-	}
+    }
+    componentWillMount = () => {
+    }
 	componentDidMount = async () => {
+        window.scrollTo(0,0)
+        console.log('woo hoo')
 		await this.importData();
 		let x = document.getElementsByName("radio payment");
 		x[0].checked = "checked";

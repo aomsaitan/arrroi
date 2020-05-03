@@ -8,46 +8,43 @@ import EmptyNoti from "./EmptyNoti";
 import Loading from "./Loading";
 
 class Notification extends Component {
+    componentDidMount = () => {        
+        window.scrollTo(0,0)
+    }
 	render() {
 		console.log("dfsdad", this.props.notification);
 		if (this.props.isLoggedIn)
-			if (this.props.notification)
-				return (
-					<div className="textS">
-						<h1 align="center" style={{fontSize: "4vw"}}>
-							Notification
-						</h1>
-						{/* {this.props.notification.map(a => console.log(a))} */}
-						<NotificationField
-							type="Order"
-							head="ได้รับสินค้าแล้วหรือยัง"
-							des="กรุณาตรวจสอบ Order #292706378684051 ให้ดีก่อนกดรับสินค้า เราขอเรียนให้ทราบว่าคุณจะไม่สามารถยื่นคำขอคืนเงินหรือคืนสินค้าได้หลังจากคุณกด ฉันได้ตรวจสอบและยอมรับสินค้า"
-							time="1:26 AM"
-							date="4/28/2020"
-						></NotificationField>
-						<NotificationField
-							type="Announce"
-							head="ร้านออมสินขายเนื้อ ได้เพิ่มสินค้าเพิ่มแล้ว"
-							des="สามารถไปดูสินค้าได้ที่ ร้านออมสินขายเนื้อ"
-							time="1:26 AM"
-							date="4/28/2020"
-						></NotificationField>
-						<NotificationField
-							type="Announce"
-							head="ขณะนี้พริกไทยป่น กำลังเป็นที่นิยม Hot!"
-							time="1:26 AM"
-							date="4/28/2020"
-						></NotificationField>
-						<NotificationField
-							type="Order"
-							head="พัสดุของท่านถูกจัดส่งเรียบร้อยแล้ว"
-							des="Order #292706378684051 Tracking # LEXPU029069964"
-							time="1:26 AM"
-							date="4/28/2020"
-						></NotificationField>
-					</div>
-                );
-            else return <Loading />
+			if (this.props.notification) {
+				// console.log("dfsaafssaf");
+				if (
+					this.props.notification[0] &&
+					this.props.notification[0].notification_list.length > 0
+				) {
+					console.log("dfsdad", this.props.notification);
+					let noti = this.props.notification[0].notification_list.slice();
+					return (
+						<div className="textS">
+							<h1 align="center" style={{fontSize: "4vw"}}>
+								Notification
+							</h1>
+							{noti.reverse().map((notification,i) => {
+								return (
+									<NotificationField
+										type={notification.type}
+										key={i}
+										head={notification.title}
+										des={notification.message}
+										time={notification.time
+											.toDate()
+											.toLocaleString()
+											.replace(",", "")}
+									/>
+								);
+							})}
+						</div>
+					);
+				} else return <EmptyNoti />;
+			} else return <Loading />;
 		else return <EmptyNoti />;
 	}
 }
@@ -59,15 +56,14 @@ const mapStateToProps = (state) => {
 	};
 };
 export default compose(
-	connect(mapStateToProps),
 	withRouter,
-	firestoreConnect((props) => {
-		// console.log(props)
-		return [
-			{
-				collection: "notification",
-				where: [["username", "==", props.username]],
-			},
-		];
-	})
+	connect(mapStateToProps),
+	firestoreConnect((props) => [
+		{
+			collection: "notification",
+			limit: 1,
+			where: [["username", "==", props.username]],
+			// orderBy: ["time", "desc"],
+		},
+	])
 )(Notification);

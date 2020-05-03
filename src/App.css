@@ -1371,5 +1371,12 @@ h2.notification {
 .Notification p {
     font-size: 1vw;
     color: #DADADA;
-    width: calc(0vw + calc(100% - 8%))
+    width: calc(52vw - 9%);
+    word-wrap: break-word;
+    white-space: normal;
+    word-break: break-all;
+}
+.toast {
+    top:50em;
+    right:1.5em
 }

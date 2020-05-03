@@ -2,9 +2,11 @@ import React, {Component} from "react";
 import RegisterField from "./RegisterField";
 import Input from "./Input";
 import information from "../images/information.png";
-import {withRouter} from "react-router-dom";
+import {withRouter, Redirect} from "react-router-dom";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
+import {connect} from "react-redux";
+import {compose} from "redux";
 class Register extends Component {
 	constructor() {
 		super();
@@ -88,8 +90,8 @@ class Register extends Component {
 			)
 			.then((u) => {
 				this.addCartToFirestore();
-                this.addNoticationToFirestore();
-                this.addDataToFirestore();
+				this.addNoticationToFirestore();
+				this.addDataToFirestore();
 				this.props.history.push({
 					pathname: "/login",
 					state: {
@@ -126,7 +128,8 @@ class Register extends Component {
 				this.setState({
 					cartid: db.id,
 				})
-			).catch(function (error) {
+			)
+			.catch(function (error) {
 				console.log(error);
 			});
 	};
@@ -134,8 +137,8 @@ class Register extends Component {
 		let db = firebase.firestore().collection("notification").doc();
 		await db
 			.set({
-                notification: [],
-                username:this.state.บัญชีผู้ใช้
+				notification: [],
+				username: this.state.บัญชีผู้ใช้,
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -152,7 +155,7 @@ class Register extends Component {
 				username: this.state.บัญชีผู้ใช้,
 				address: this.state.ที่อยู่,
 				phone: this.state.เบอร์โทรศัพท์,
-                cartid: this.state.cartid,
+				cartid: this.state.cartid,
 				menu: [],
 				store_id: "",
 			})
@@ -244,179 +247,204 @@ class Register extends Component {
 	};
 
 	render() {
-		return (
-			<div className="horizontal-center textS">
-				{this.state.loading ? <Loading /> : null}
-				<p className="title">Register</p>
-				<div
-					style={{
-						fontSize: "1.5vw",
-						textAlign: "left",
-						textIndent: "19vw",
-						margin: "0px 0px 1.5vw 0px",
-					}}
-				>
-					<span style={{color: "red"}}>**</span>
-					<span style={{color: "#707070"}}>
-						หากท่านต้องการคำแนะนำในการกรอกข้อมูลหัวข้อใด
-						ท่านสามารถคลิกที่ไอคอน
-					</span>
-					<span>
-						<img
-							src={information}
-							alt="info"
-							style={{width: "1.6%", marginLeft: "0.6vw"}}
-						/>
-					</span>
-				</div>
-				<div className="form-register-center">
-					<form
-						className="register form-register-center"
-						id="register"
-						autoComplete="off"
-						onSubmit={this.handleSubmit}
+		if (!this.props.isLoggedIn)
+			return (
+				<div className="horizontal-center textS">
+					{this.state.loading ? <Loading /> : null}
+					<p className="title">Register</p>
+					<div
+						style={{
+							fontSize: "1.5vw",
+							textAlign: "left",
+							textIndent: "19vw",
+							margin: "0px 0px 1.5vw 0px",
+						}}
 					>
-						<RegisterField
-							id="ชื่อจริง"
-							display={this.state.error.nameError}
+						<span style={{color: "red"}}>**</span>
+						<span style={{color: "#707070"}}>
+							หากท่านต้องการคำแนะนำในการกรอกข้อมูลหัวข้อใด
+							ท่านสามารถคลิกที่ไอคอน
+						</span>
+						<span>
+							<img
+								src={information}
+								alt="info"
+								style={{width: "1.6%", marginLeft: "0.6vw"}}
+							/>
+						</span>
+					</div>
+					<div className="form-register-center">
+						<form
+							className="register form-register-center"
+							id="register"
+							autoComplete="off"
+							onSubmit={this.handleSubmit}
 						>
-							<Input
-								type="text"
+							<RegisterField
 								id="ชื่อจริง"
-								pass={this.getData}
 								display={this.state.error.nameError}
-								disabled={this.state.error.nameError === ""}
-								maxLength="25"
-								hidden={true}
-								placeholder="สมชาย"
-								default=""
-							/>
-						</RegisterField>
-						<RegisterField
-							id="นามสกุล"
-							display={this.state.error.surnameError}
-						>
-							<Input
-								type="text"
+							>
+								<Input
+									type="text"
+									id="ชื่อจริง"
+									pass={this.getData}
+									display={this.state.error.nameError}
+									disabled={this.state.error.nameError === ""}
+									maxLength="25"
+									hidden={true}
+									placeholder="สมชาย"
+									default=""
+								/>
+							</RegisterField>
+							<RegisterField
 								id="นามสกุล"
-								pass={this.getData}
 								display={this.state.error.surnameError}
-								disabled={this.state.error.surnameError === ""}
-								maxLength="25"
-								hidden={true}
-								placeholder="รักชาติ"
-								default=""
-							/>
-						</RegisterField>
-						<RegisterField
-							id="อีเมล"
-							display={this.state.error.emailError}
-						>
-							<Input
-								type="text"
+							>
+								<Input
+									type="text"
+									id="นามสกุล"
+									pass={this.getData}
+									display={this.state.error.surnameError}
+									disabled={
+										this.state.error.surnameError === ""
+									}
+									maxLength="25"
+									hidden={true}
+									placeholder="รักชาติ"
+									default=""
+								/>
+							</RegisterField>
+							<RegisterField
 								id="อีเมล"
-								pass={this.getData}
-								disabled={this.state.error.emailError === ""}
-								maxLength="25"
-								hidden={true}
-								placeholder="test@example.com"
-								default=""
-							/>
-						</RegisterField>
-						<RegisterField
-							id="บัญชีผู้ใช้"
-							display={this.state.error.usernameError}
-						>
-							<Input
-								type="text"
+								display={this.state.error.emailError}
+							>
+								<Input
+									type="text"
+									id="อีเมล"
+									pass={this.getData}
+									disabled={
+										this.state.error.emailError === ""
+									}
+									maxLength="25"
+									hidden={true}
+									placeholder="test@example.com"
+									default=""
+								/>
+							</RegisterField>
+							<RegisterField
 								id="บัญชีผู้ใช้"
-								pass={this.getData}
-								disabled={this.state.error.usernameError === ""}
-								maxLength="11"
-								hidden={true}
-								placeholder="example_01"
-								default=""
-							/>
-						</RegisterField>
-						<RegisterField
-							id="รหัสผ่าน"
-							info={
-								"รหัสผ่านต้องประกอบด้วย\n- ความยาวอย่างน้อย 8 ตัวอักษร\n- ภาษาอังกฤษพิมพ์ใหญ่อย่างน้อย 1 ตัวอักษร\n- ภาษาอังกฤษพิมพ์เล็กอย่างน้อย 1 ตัวอักษร\n- ตัวเลขอย่างน้อย 1 ตัวอักษร"
-							}
-							hasIcon={true}
-							display={this.state.error.passwordError}
-						>
-							<Input
-								type="password"
+								display={this.state.error.usernameError}
+							>
+								<Input
+									type="text"
+									id="บัญชีผู้ใช้"
+									pass={this.getData}
+									disabled={
+										this.state.error.usernameError === ""
+									}
+									maxLength="11"
+									hidden={true}
+									placeholder="example_01"
+									default=""
+								/>
+							</RegisterField>
+							<RegisterField
 								id="รหัสผ่าน"
-								pass={this.getData}
-								disabled={this.state.error.passwordError === ""}
-								maxLength="25"
-								hidden={true}
-								placeholder="Ex123456789"
-								default=""
-							/>
-						</RegisterField>
+								info={
+									"รหัสผ่านต้องประกอบด้วย\n- ความยาวอย่างน้อย 8 ตัวอักษร\n- ภาษาอังกฤษพิมพ์ใหญ่อย่างน้อย 1 ตัวอักษร\n- ภาษาอังกฤษพิมพ์เล็กอย่างน้อย 1 ตัวอักษร\n- ตัวเลขอย่างน้อย 1 ตัวอักษร"
+								}
+								hasIcon={true}
+								display={this.state.error.passwordError}
+							>
+								<Input
+									type="password"
+									id="รหัสผ่าน"
+									pass={this.getData}
+									disabled={
+										this.state.error.passwordError === ""
+									}
+									maxLength="25"
+									hidden={true}
+									placeholder="Ex123456789"
+									default=""
+								/>
+							</RegisterField>
 
-						<RegisterField
-							id="ยืนยันรหัสผ่าน"
-							display={this.state.error.confirmError}
-						>
-							<Input
-								type="password"
+							<RegisterField
 								id="ยืนยันรหัสผ่าน"
-								pass={this.getData}
-								disabled={this.state.error.confirmError === ""}
-								maxLength="25"
-								hidden={true}
-								placeholder="Ex123456789"
-								default=""
-							/>
-						</RegisterField>
+								display={this.state.error.confirmError}
+							>
+								<Input
+									type="password"
+									id="ยืนยันรหัสผ่าน"
+									pass={this.getData}
+									disabled={
+										this.state.error.confirmError === ""
+									}
+									maxLength="25"
+									hidden={true}
+									placeholder="Ex123456789"
+									default=""
+								/>
+							</RegisterField>
 
-						<RegisterField
-							id="เบอร์โทรศัพท์"
-							display={this.state.error.phoneError}
-						>
-							<Input
-								type="text"
+							<RegisterField
 								id="เบอร์โทรศัพท์"
-								pass={this.getData}
-								disabled={this.state.error.phoneError === ""}
-								maxLength="10"
-								hidden={true}
-								placeholder="0899199218"
-								default=""
-							/>
-						</RegisterField>
-						<RegisterField
-							id="ที่อยู่"
-							display={this.state.error.addressError}
-						>
-							<Input
-								default=""
-								type="text"
+								display={this.state.error.phoneError}
+							>
+								<Input
+									type="text"
+									id="เบอร์โทรศัพท์"
+									pass={this.getData}
+									disabled={
+										this.state.error.phoneError === ""
+									}
+									maxLength="10"
+									hidden={true}
+									placeholder="0899199218"
+									default=""
+								/>
+							</RegisterField>
+							<RegisterField
 								id="ที่อยู่"
-								pass={this.getData}
-								disabled={this.state.error.addressError === ""}
-								maxLength="92"
-								hidden={true}
-								placeholder="99/99 หมู่ 9 ถนนสายไหม ต.จัดสรร อ.เมือง จ.อาหาร"
-							/>
-						</RegisterField>
-					</form>
-					<button
-						className="textS login"
-						type="submit"
-						form="register"
-						style={{position: "absolute", top: "105%", left: "95%"}}
-					>
-						ยืนยัน
-					</button>
+								display={this.state.error.addressError}
+							>
+								<Input
+									default=""
+									type="text"
+									id="ที่อยู่"
+									pass={this.getData}
+									disabled={
+										this.state.error.addressError === ""
+									}
+									maxLength="92"
+									hidden={true}
+									placeholder="99/99 หมู่ 9 ถนนสายไหม ต.จัดสรร อ.เมือง จ.อาหาร"
+								/>
+							</RegisterField>
+						</form>
+						<button
+							className="textS login"
+							type="submit"
+							form="register"
+							style={{
+								position: "absolute",
+								top: "105%",
+								left: "95%",
+							}}
+						>
+							ยืนยัน
+						</button>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		else return <Redirect to="/home" />;
 	}
 }
 
-export default withRouter(Register);
+const mapStateToProps = (state) => {
+	return {
+		isLoggedIn: state.loginReducer.isLoggedIn,
+	};
+};
+export default compose(connect(mapStateToProps), withRouter)(Register);

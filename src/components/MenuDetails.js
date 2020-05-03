@@ -22,6 +22,7 @@ class MenuDetails extends Component {
 	componentWillMount = async () => {
 		await this.importdata();
 		await this.getname();
+        window.scrollTo(0,0)
 	};
 
 	getname = async () => {

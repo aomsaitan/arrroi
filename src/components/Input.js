@@ -22,9 +22,7 @@ class Input extends Component {
 						: 999,
 			}),
 			() => {
-				// this.props.
 				this.props.pass(event, this.state.text);
-				console.log(this.props.id);
 				if (this.props.id.split(" ").length > 2)
 					this.props.updateCart(
 						this.props.index,
@@ -47,7 +45,6 @@ class Input extends Component {
 			}),
 			() => {
 				this.props.pass(event, this.state.text);
-				console.log(this.props);
 				if (this.props.id.split(" ").length > 2)
 					this.props.updateCart(
 						this.props.index,
@@ -62,7 +59,6 @@ class Input extends Component {
 			text: event.target.value,
 		});
 		if (event.target.id.includes("button")) {
-			console.log(event.target.value);
 			if (
 				event.target.value === "" ||
 				parseInt(event.target.value) === 0

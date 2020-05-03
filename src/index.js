@@ -2,7 +2,24 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
+import config from "./redux/store";
 import * as serviceWorker from "./serviceWorker";
+import firebase from "./database/firebase";
+import {updateNotification, finish} from "./redux/index";
+const {store} = config();
+// document.onreadystatechange = async () => {
+// 	if (document.readyState === "complete") {
+// 		// setTimeout(()=>{console.log('555')},5000)
+		
+// 	}
+// };
+// document.addEventListener('DOMContentLoaded' = async() => {
+//     i
+// })
+// window.addEventListener('beforeunload', () => {
+// 	return null;
+// });
+
 document.addEventListener("mouseup", (event) => {
 	let x = document.getElementById("dropdown");
 	let y = document.getElementById("more_menu");

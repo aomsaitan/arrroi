@@ -1,12 +1,14 @@
 import React, {Component} from "react";
 import firebase from "../database/firebase";
 import {connect} from "react-redux";
+import {compose} from "redux";
 import OrderDetailField from "./OrderDetailField";
 import Loading from "./Loading";
 import {removeCart, importCartList} from "../redux/index";
 import {Redirect} from "react-router-dom";
 import EmptyOrder from "./EmptyOrder";
 import EmptyBuy from "./EmptyBuy";
+import {withRouter} from "react-router-dom";
 
 class MyHistory extends Component {
 	constructor(props) {
@@ -15,6 +17,7 @@ class MyHistory extends Component {
 		this.state = {loading: true};
 	}
 	componentDidMount = async () => {
+        window.scrollTo(0,0)
 		if (this.props.match.url.includes("sales")) {
 			await this.importPayment();
 		} else {
@@ -23,19 +26,19 @@ class MyHistory extends Component {
 	};
 	importPayment = async () => {
 		let query = firebase.firestore().collection("cart");
-        console.log("documentsnapshot.data().productlist");
-        await query
-            // .whereArrayContains("cartlist","payment_status")
-			.where("cartlist", 'array-contains' ,"payment_status")
+		console.log("documentsnapshot.data().productlist");
+		await query
+			// .whereArrayContains("cartlist","payment_status")
+			.where("cartlist", "array-contains", "payment_status")
 			.get()
 			.then((querysnapshot) => {
-                console.log(querysnapshot);
+				console.log(querysnapshot);
 				querysnapshot.forEach((documentsnapshot) => {
-					console.log("fdfsfdfdsd",documentsnapshot.data());
+					console.log("fdfsfdfdsd", documentsnapshot.data());
 				});
 			})
 			.catch((e) => {
-                console.log("documentsnapshot.data().productlist");
+				console.log("documentsnapshot.data().productlist");
 				console.log(e.message);
 			});
 	};
@@ -67,6 +70,7 @@ class MyHistory extends Component {
 			});
 	};
 	render() {
+		console.log("111111111111111111111111111111");
 		if (this.props.isLoggedIn)
 			if (
 				this.props.cartList !== undefined &&
@@ -118,7 +122,7 @@ class MyHistory extends Component {
 											<div align="center">
 												<button
 													onClick={this.deleteCart}
-													className="login"
+													className="login textS"
 													style={{
 														width: "auto",
 														padding: "0.5vw",
@@ -138,7 +142,6 @@ class MyHistory extends Component {
 					);
 				else return <Loading />;
 			else return <EmptyBuy />;
-		// else return <> </>
 		else return <Redirect to="/login" />;
 	}
 }
@@ -147,7 +150,6 @@ const mapStateToProps = (state) => {
 		cart_id: state.addToCartReducer.id,
 		cartList: state.addToCartReducer.cartList,
 		isLoggedIn: state.loginReducer.isLoggedIn,
-		username: state.loginReducer.username,
 	};
 };
 const mapDispatchToProps = (dispatch) => {
@@ -156,4 +158,7 @@ const mapDispatchToProps = (dispatch) => {
 		importCartList: (product) => dispatch(importCartList(product)),
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(MyHistory);
+export default compose(
+	connect(mapStateToProps, mapDispatchToProps),
+	withRouter
+)(MyHistory);

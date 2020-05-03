@@ -17,6 +17,7 @@ class Ingredients extends Component {
 	}
 
 	componentDidMount = async () => {
+        window.scrollTo(0,0)
 		if (this.state.type === "menu") await this.showpdl_menu();
 		else await this.showpdl_store();
 	};

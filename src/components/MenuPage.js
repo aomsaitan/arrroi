@@ -16,6 +16,7 @@ class MenuPage extends Component {
 	}
 
 	componentDidMount = async () => {
+        window.scrollTo(0,0)
 		await this.importRecommend();
 		await this.importdata();
 	};

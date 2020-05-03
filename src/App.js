@@ -9,7 +9,7 @@ import Register from "./components/Register";
 import Navbar from "./components/Navbar";
 import About from "./components/About";
 import Test from "./components/Test";
-import Notification from './components/Notification'
+import Notification from "./components/Notification";
 import MenuPage from "./components/MenuPage";
 import MenuDetails from "./components/MenuDetails";
 import Ingredients from "./components/Ingredients";
@@ -20,21 +20,22 @@ import Cart from "./components/Cart";
 import {PersistGate} from "redux-persist/integration/react";
 import MyHistory from "./components/MyHistory";
 import configureStore from "./redux/store";
-import { ReactReduxFirebaseProvider } from "react-redux-firebase";
-import {createFirestoreInstance} from 'redux-firestore'
-import firebase from './database/firebase'
-import 'react-toastify/dist/ReactToastify.css'
+import {ReactReduxFirebaseProvider} from "react-redux-firebase";
+import {createFirestoreInstance} from "redux-firestore";
+import firebase from "./database/firebase";
+import {ToastContainer,toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const rrfConfig = {
-    userProfile: 'users',
-    userFirestoreForProfile:true
-}
+	userProfile: "users",
+	userFirestoreForProfile: true,
+};
 const {store, persistor} = configureStore();
 const rrfProps = {
-    firebase,
-    config: rrfConfig,
-    dispatch: store.dispatch,
-    createFirestoreInstance
-}
+	firebase,
+	config: rrfConfig,
+	dispatch: store.dispatch,
+	createFirestoreInstance,
+};
 
 class App extends Component {
 	render() {
@@ -45,13 +46,36 @@ class App extends Component {
 						<Router>
 							<Navbar />
 							<div style={{marginBottom: "3vw"}} />
+							<ToastContainer
+                                newestOnTop={true}
+                                bodyClassName="textS toast"
+                                // classname="toast"
+								style={{
+									wordWrap: "break-word",
+									whiteSpace: "normal",
+                                    wordBreak: "break-all",
+                                    color: "black",
+                                    textAlign: "center",
+                                    fontSize: "1.5vw",
+                                    top:'2.5em',
+                                    right:"1em"
+								}}
+							/>
 							<Switch>
 								<Route path="/" exact component={Welcome} />
-								<Route path="/login" component={Login} />
-								<Route path="/register" component={Register} />
-								<Route path="/home" component={Home} />
-								<Route path="/test/id=:id" component={Test} />
-								<Route path="/about" component={About} />
+								<Route path="/login" exact component={Login} />
+								<Route
+									path="/register"
+									exact
+									component={Register}
+								/>
+								<Route path="/home" exact component={Home} />
+								<Route
+									path="/test/id=:id"
+									exact
+									component={Test}
+								/>
+								<Route path="/about" exact component={About} />
 								<Route
 									path="/menu"
 									exact
@@ -59,10 +83,12 @@ class App extends Component {
 								/>
 								<Route
 									path="/menu/steps/id=:id"
+									exact
 									component={MenuDetails}
 								/>
 								<Route
 									path="/menu/ingredients/id=:id"
+									exact
 									component={Ingredients}
 								/>
 								<Route
@@ -76,25 +102,30 @@ class App extends Component {
 									component={Ingredients}
 								/>
 								<Route
-									path="/:name/cart/"
+									path="/:name/cart"
 									exact
 									component={Cart}
 								/>
 								<Route
 									path="/:name/cart/payment"
+									exact
 									component={OrderDetails}
 								/>
 								<Route
 									path="/:name/orders"
+									exact
 									component={MyHistory}
 								/>
 								<Route
 									path="/:name/sales"
+									exact
 									component={MyHistory}
-								/><Route
-                                path="/:name/notification"
-                                component={Notification}
-                            />
+								/>
+								<Route
+									path="/:name/notification"
+									exact
+									component={Notification}
+								/>
 							</Switch>
 						</Router>
 					</ReactReduxFirebaseProvider>

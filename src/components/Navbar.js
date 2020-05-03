@@ -4,12 +4,12 @@ import menu from "../images/menu.png";
 import shopping_cart from "../images/shopping-cart.png";
 import notification from "../images/notification.png";
 import {withRouter, Link} from "react-router-dom";
-import {logout} from "../redux/index";
+import {logout, updateNotification, clearAll, finish} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import NavbarList from "./NavbarList";
-import {clearAll} from "../redux/index";
 import firebase from "../database/firebase";
+import {toast} from "react-toastify";
 import {firestoreConnect} from "react-redux-firebase";
 class Navbar extends Component {
 	constructor(props) {
@@ -17,6 +17,27 @@ class Navbar extends Component {
 
 		this.state = {};
 	}
+	componentWillMount = async () => {
+		if (this.props.isLoggedIn) {
+			let query = firebase.firestore();
+			await query
+				.collection("notification")
+				.where("username", "==", this.props.username)
+				.limit(1)
+				.get()
+				.then((querysnapshot) => {
+					querysnapshot.forEach((documentsnapshot) => {
+						this.props.updateNotification(
+							documentsnapshot.data().notification_list.length
+						);
+						this.props.finish();
+					});
+				})
+				.catch(function (error) {
+					console.log("Error", error);
+				});
+		}
+	};
 
 	showDropdown = () => {
 		let x = document.getElementById("dropdown");
@@ -47,17 +68,37 @@ class Navbar extends Component {
 		await query.doc(this.props.cart_id).set({cartlist: carttmp});
 		this.props.logout();
 		this.props.clearAll();
-		this.props.history.push("/login");
+		console.log(this.props.history.pathname);
+		console.log(this.props.history.location.pathname);
+		console.log(this.props.match);
+		this.props.history.push({
+			pathname: "/login",
+			state: this.props.location.pathname,
+		});
+	};
+	notify = () => {
+        console.log('dsdffddsfdffdssfddsdf')
+		let x = this.props.notification[0].notification_list.slice();
+		toast.info(x.reverse()[0].message, {
+			position: toast.POSITION.TOP_RIGHT,
+			autoClose: 2000,
+			pauseOnFocusLoss: false,
+			closeButton: true,
+		});
+		this.props.updateNotification(x.length);
+		return null;
 	};
 	render() {
-		console.log("notification", this.props.notification);
+        // console.log(this.props.notification,this.props.isFinished)
 		return (
 			<div className="row-flex navbar textM">
 				{this.props.notification &&
-					this.props.isLoggedIn &&
-					this.props.notification.map(() => {
-						console.log("fgfsdfgdsfa");
-					})}
+				this.props.notification[0] &&
+				this.props.isFinished &&
+				parseInt(this.props.quantity) !==
+					this.props.notification[0].notification_list.length
+					? this.notify()
+					: null}
 				<img
 					style={{
 						width: "2%",
@@ -230,7 +271,10 @@ class Navbar extends Component {
 							}}
 						/>
 						<Link
-							to="/login"
+							to={{
+								pathname: "/login",
+								state: this.props.history.location.pathname,
+							}}
 							className="link"
 							style={{
 								fontSize: "1.4vw",
@@ -246,7 +290,10 @@ class Navbar extends Component {
 					to={
 						this.props.isLoggedIn
 							? "/" + this.props.username + "/cart"
-							: "/login"
+							: {
+									pathname: "/login",
+									state: this.props.history.location.pathname,
+							  }
 					}
 				>
 					{this.props.numberOfItems !== 0 ? (
@@ -297,18 +344,30 @@ const mapStateToProps = (state) => {
 		cart_id: state.addToCartReducer.id,
 		productList: state.addToCartReducer.productList,
 		notification: state.firestore.ordered.notification,
+		quantity: state.notificationReducer.quantity,
+		isFinished: state.notificationReducer.isFinished,
 	};
 };
 const mapDispatchToProps = (dispatch) => {
 	return {
 		logout: () => dispatch(logout()),
 		clearAll: () => dispatch(clearAll()),
+		updateNotification: (length) => dispatch(updateNotification(length)),
+		finish: () => {
+			dispatch(finish());
+		},
 	};
 };
 export default compose(
 	connect(mapStateToProps, mapDispatchToProps),
 	firestoreConnect((props) => {
-		return [{collection: "notification"}];
+		return [
+			{
+				collection: "notification",
+				limit: 1,
+				where: [["username", "==", props.username]],
+			},
+		];
 	}),
 	withRouter
 )(Navbar);

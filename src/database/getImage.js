@@ -18,7 +18,11 @@ function getImage(HocComponent) {
 			const {nameIcon} = this.props;
 
 			if (nameIcon) {
-				this.getImageIcon(nameIcon);
+				if (typeof nameIcon !== "object") this.getImageIcon(nameIcon);
+				else
+					nameIcon.forEach((element) => {
+						this.getImageIcon(nameIcon);
+					});
 			}
 		}
 
