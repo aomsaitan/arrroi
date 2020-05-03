@@ -1153,7 +1153,7 @@ button.letShopB {
     width: 3vw;
     height: 3vw;
     margin: 13vw -5vw;
-    top:12vw;
+    top: 12vw;
     z-index: 1;
     cursor: pointer;
 }
@@ -1163,7 +1163,7 @@ button.letShopB {
     width: 3vw;
     height: 3vw;
     margin: 13vw 60vw;
-    top:12vw;
+    top: 12vw;
     z-index: 1;
     cursor: pointer;
 }
@@ -1286,25 +1286,30 @@ button.letShopB {
 
 /* ///////////////////////////////////////////////////EmptyBuy//////////////////////////////////////////////////////// */
 
-.emptyBuy{
+.emptyBuy {
     font-size: 2vw;
 }
-.BGEmptyBuy{
-    width: 100%;;
+
+.BGEmptyBuy {
+    width: 100%;
+    ;
     position: fixed;
     z-index: -10;
-    opacity: 0.1;   
+    opacity: 0.1;
 }
-.letBuy{
+
+.letBuy {
     margin-top: calc(0vw + 8%);
 }
-.letBuyT{
+
+.letBuyT {
     font-size: 3vw;
 }
 
-.businessIcon{
-    width: 15vw;   
+.businessIcon {
+    width: 15vw;
 }
+
 button.letBuyB {
     width: 10vw;
     color: white;
@@ -1313,4 +1318,58 @@ button.letBuyB {
     margin: 0px 1.5vw 0px 1.5vw;
     font-size: 2vw;
     margin-top: 1vw;
+}
+
+/* ///////////////////////////////////////////////////Notification//////////////////////////////////////////////////// */
+.emptyNoti {
+    font-size: 2vw;
+}
+
+.BGEmptyNoti {
+    width: 100%;
+    ;
+    position: fixed;
+    z-index: -10;
+    opacity: 0.1;
+}
+
+.letNoti {
+    margin-top: 8%;
+}
+
+.letNotiT {
+    font-size: 3vw;
+}
+
+.smartphone {
+    width: 15vw;
+}
+
+.Notification {
+    font-size: 2.5vw;
+    background-color: #814A2C;
+    display: flex;
+    border-radius: calc(0vw + 5px);
+    width: calc(0vw + 60%);
+    margin: calc(0vw + 0.5%) calc(0vw + 20%) 0% calc(0vw + 20%);
+    color: aliceblue;
+    padding: calc(0vw + 1%);
+}
+
+.Notification img {
+    width: calc(0vw + 4%);
+    height: 2.5vw;
+    margin: calc(0vw + 0.9%) calc(0vw + 3%) 0% calc(0vw + 8%);
+
+}
+
+h2.notification {
+    font-size: 2vw;
+    font-weight: lighter;
+}
+
+.Notification p {
+    font-size: 1vw;
+    color: #DADADA;
+    width: calc(0vw + calc(100% - 8%))
 }

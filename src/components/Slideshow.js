@@ -1,9 +1,6 @@
 import React, {Component} from "react";
 import Image from "./Image";
-import getImage from "../database/getImage";
-import ข้าวผัดกุ้ง from "../images/ข้าวผัดกุ้ง.png";
 var slideIndex, slides, dots;
-// const image = [{ข้าวผัดกุ้ง}, {ข้าวผัดกุ้ง}, {ข้าวผัดกุ้ง}, {ข้าวผัดกุ้ง}];
 class SlideShow extends Component {
 	initGallery = () => {
 		slideIndex = 0;
@@ -17,6 +14,7 @@ class SlideShow extends Component {
 			if (i === 0) dot.classList.add("slideImg1");
 			else dot.classList.add("slideImg");
 			dot.name = this.props.nameFood[i];
+			dot.alt = this.props.nameFood[i];
 
 			dot.onclick = () => {
 				this.moveSlide(i);
@@ -51,7 +49,7 @@ class SlideShow extends Component {
 			moveSlideAnimClass.forCurrent = "moveRightCurrentSlide";
 			moveSlideAnimClass.forNext = "moveRightPrevSlide";
 		}
-		if (n != slideIndex) {
+		if (n !== slideIndex) {
 			next = slides[n];
 			current = slides[slideIndex];
 			for (i = 0; i < slides.length; i++) {
@@ -66,44 +64,49 @@ class SlideShow extends Component {
 		}
 	};
 	render() {
-		console.log("111111",this.props.nameFood);
-		// if (this.props.imageArray!== [])
-		// 	{
-        //         console.log("2222222222", this.props.imageArray);
-        //         console.log("2222222222", this.props.imageArray.length);
-        //     console.log("2222222222", this.props.imageArray[0]);
-            return (
-				<div>
-					<div className="galleryContainer">
-						<Image
-							className="arrowL"
-							nameIcon="arrowL"
-							onClick={() => this.plusSlides(-1)}
-						/>
-						<Image
-							className="arrowR"
-							nameIcon="arrowR"
-							onClick={() => this.plusSlides(1)}
-						/>
-						<div className="slideShowContainer">
-							<div className="imageHolder">
-								<img name={this.props.nameFood[0]} />
-							</div>
-							<div className="imageHolder">
-								<img name={this.props.nameFood[1]} />
-							</div>
-							<div className="imageHolder">
-								<img name={this.props.nameFood[2]} />
-							</div>
-							<div className="imageHolder">
-								<img name={this.props.nameFood[3]} />
-							</div>
+		return (
+			<div>
+				<div className="galleryContainer">
+					<Image
+						className="arrowL"
+						nameIcon="arrowL"
+						onClick={() => this.plusSlides(-1)}
+					/>
+					<Image
+						className="arrowR"
+						nameIcon="arrowR"
+						onClick={() => this.plusSlides(1)}
+					/>
+					<div className="slideShowContainer">
+						<div className="imageHolder">
+							<img
+								name={this.props.nameFood[0]}
+								alt={this.props.nameFood[0]}
+							/>
 						</div>
-						<div id="dotsContainer"></div>
+						<div className="imageHolder">
+							<img
+								name={this.props.nameFood[1]}
+								alt={this.props.nameFood[1]}
+							/>
+						</div>
+						<div className="imageHolder">
+							<img
+								name={this.props.nameFood[2]}
+								alt={this.props.nameFood[2]}
+							/>
+						</div>
+						<div className="imageHolder">
+							<img
+								name={this.props.nameFood[3]}
+								alt={this.props.nameFood[3]}
+							/>
+						</div>
 					</div>
+					<div id="dotsContainer"></div>
 				</div>
-			);
-		// else return null;
+			</div>
+		);
 	}
 }
 export default SlideShow;

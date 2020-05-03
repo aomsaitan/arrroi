@@ -3,9 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-window.addEventListener("load", async () => {
-	console.log("dsdafd");
-});
 document.addEventListener("mouseup", (event) => {
 	let x = document.getElementById("dropdown");
 	let y = document.getElementById("more_menu");

@@ -5,7 +5,6 @@ import MenuList from "./MenuList";
 import RegionalMenu from "./RegionalMenu";
 import Slideshow from "./Slideshow";
 import Loading from "./Loading";
-import {firestore} from "firebase";
 class MenuPage extends Component {
 	constructor(props) {
 		super(props);

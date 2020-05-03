@@ -18,7 +18,8 @@ class Login extends Component {
 				passwordError: "",
 			},
 			cart_id: "",
-			cart: "",
+            cart: "",
+            noti_id:""
 		};
 	}
 	// getCartData = async () => {
@@ -67,10 +68,10 @@ class Login extends Component {
 		await query
 			.where("email", "==", this.state.Email)
 			.get()
-			.then((qureysnapshot) => {
-				qureysnapshot.forEach((documentsnapshot) => {
+			.then((querysnapshot) => {
+				querysnapshot.forEach((documentsnapshot) => {
 					this.setState({
-						username: documentsnapshot.data().username,
+                        username: documentsnapshot.data().username,
 					});
 				});
 			});
@@ -81,7 +82,7 @@ class Login extends Component {
 			.signInWithEmailAndPassword(this.state.Email, this.state.Password)
 			.then(async (u) => {
 				await this.getUsername();
-				this.props.login(this.state.username);
+				this.props.login(this.state.username,this.state.noti_id);
 				await this.getCart();
 				this.props.history.location.state
 					? this.props.history.go(-2)

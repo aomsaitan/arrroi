@@ -6,6 +6,7 @@ import Loading from "./Loading";
 import {removeCart, importCartList} from "../redux/index";
 import {Redirect} from "react-router-dom";
 import EmptyOrder from "./EmptyOrder";
+import EmptyBuy from "./EmptyBuy";
 
 class MyHistory extends Component {
 	constructor(props) {
@@ -14,7 +15,29 @@ class MyHistory extends Component {
 		this.state = {loading: true};
 	}
 	componentDidMount = async () => {
-		await this.importCart();
+		if (this.props.match.url.includes("sales")) {
+			await this.importPayment();
+		} else {
+			await this.importCart();
+		}
+	};
+	importPayment = async () => {
+		let query = firebase.firestore().collection("cart");
+        console.log("documentsnapshot.data().productlist");
+        await query
+            // .whereArrayContains("cartlist","payment_status")
+			.where("cartlist", 'array-contains' ,"payment_status")
+			.get()
+			.then((querysnapshot) => {
+                console.log(querysnapshot);
+				querysnapshot.forEach((documentsnapshot) => {
+					console.log("fdfsfdfdsd",documentsnapshot.data());
+				});
+			})
+			.catch((e) => {
+                console.log("documentsnapshot.data().productlist");
+				console.log(e.message);
+			});
 	};
 	importCart = async () => {
 		let query = firebase.firestore().collection("cart");
@@ -23,6 +46,9 @@ class MyHistory extends Component {
 			.get()
 			.then((documentsnapshot) => {
 				this.props.importCartList(documentsnapshot.data().cartlist);
+			})
+			.catch((e) => {
+				console.log(e.message);
 			});
 		this.setState({loading: false});
 	};
@@ -35,20 +61,30 @@ class MyHistory extends Component {
 		console.log(this.props.cartList);
 		await query
 			.doc(this.props.cart_id)
-			.set({cartlist: this.props.cartList});
+			.set({cartlist: this.props.cartList})
+			.catch((e) => {
+				console.log(e.message);
+			});
 	};
-    render() {
-        console.log(this.props.cartList);
-        if (this.props.isLoggedIn)
-            if (this.props.cartList !== undefined && this.props.cartList.length >1)            
+	render() {
+		if (this.props.isLoggedIn)
+			if (
+				this.props.cartList !== undefined &&
+				this.props.cartList.length > 1
+			)
 				if (!this.state.loading)
+					// if(this.props.match.url.includes("orders"))
 					return (
 						<div className="textS">
 							<h1 align="center" style={{fontSize: "4vw"}}>
-								รายการสินค้าที่สั่งซื้อ
+								{this.props.username}
 							</h1>
+							<div class="MySales textS">การขายของฉัน</div>
 							{this.props.cartList.map((cart, i) => {
-								if (cart.productlist.length !== 0 && cart.payment_status)
+								if (
+									cart.productlist.length !== 0 &&
+									cart.payment_status
+								)
 									return (
 										<div key={i + " order"}>
 											{cart.productlist.map(
@@ -101,7 +137,8 @@ class MyHistory extends Component {
 						</div>
 					);
 				else return <Loading />;
-			else return <EmptyOrder />;
+			else return <EmptyBuy />;
+		// else return <> </>
 		else return <Redirect to="/login" />;
 	}
 }
@@ -110,6 +147,7 @@ const mapStateToProps = (state) => {
 		cart_id: state.addToCartReducer.id,
 		cartList: state.addToCartReducer.cartList,
 		isLoggedIn: state.loginReducer.isLoggedIn,
+		username: state.loginReducer.username,
 	};
 };
 const mapDispatchToProps = (dispatch) => {

@@ -28,6 +28,8 @@ class Register extends Component {
 				confirmError: "",
 				phoneError: "",
 			},
+			cartid: "",
+			notiid: "",
 			loading: false,
 		};
 	}
@@ -78,7 +80,6 @@ class Register extends Component {
 	};
 
 	signup = async () => {
-		//signup (Register) add account to auth
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(
@@ -87,7 +88,8 @@ class Register extends Component {
 			)
 			.then((u) => {
 				this.addCartToFirestore();
-				this.addDataToFirestore();
+                this.addNoticationToFirestore();
+                this.addDataToFirestore();
 				this.props.history.push({
 					pathname: "/login",
 					state: {
@@ -107,7 +109,6 @@ class Register extends Component {
 				});
 			});
 	};
-
 	addCartToFirestore = async () => {
 		let db = firebase.firestore().collection("cart").doc();
 		await db
@@ -125,9 +126,21 @@ class Register extends Component {
 				this.setState({
 					cartid: db.id,
 				})
-			);
+			).catch(function (error) {
+				console.log(error);
+			});
 	};
-
+	addNoticationToFirestore = async () => {
+		let db = firebase.firestore().collection("notification").doc();
+		await db
+			.set({
+                notification: [],
+                username:this.state.บัญชีผู้ใช้
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
 	addDataToFirestore = () => {
 		//add data to firestore
 		let db = firebase.firestore();
@@ -139,7 +152,7 @@ class Register extends Component {
 				username: this.state.บัญชีผู้ใช้,
 				address: this.state.ที่อยู่,
 				phone: this.state.เบอร์โทรศัพท์,
-				cartid: this.state.cartid,
+                cartid: this.state.cartid,
 				menu: [],
 				store_id: "",
 			})

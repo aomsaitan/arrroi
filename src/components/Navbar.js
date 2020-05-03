@@ -8,9 +8,16 @@ import {logout} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import NavbarList from "./NavbarList";
-import {clearAll} from '../redux/index'
-import firebase from '../database/firebase'
+import {clearAll} from "../redux/index";
+import firebase from "../database/firebase";
+import {firestoreConnect} from "react-redux-firebase";
 class Navbar extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {};
+	}
+
 	showDropdown = () => {
 		let x = document.getElementById("dropdown");
 		if (x.className === "dropdown-block") {
@@ -26,25 +33,31 @@ class Navbar extends Component {
 		} else {
 			x.className = "dropdown-block";
 		}
-    };
-    sendCartData = async() => {
-        let query = firebase.firestore().collection("cart");
-        let carttmp;
+	};
+	sendCartData = async () => {
+		let query = firebase.firestore().collection("cart");
+		let carttmp;
 		await query
 			.doc(this.props.cart_id)
 			.get()
 			.then((documentsnapshot) => {
 				carttmp = documentsnapshot.data().cartlist;
-            });
-        carttmp[carttmp.length-1].productlist = this.props.productList       
-        await query.doc(this.props.cart_id).set({ cartlist: carttmp });
-        this.props.logout();
-        this.props.clearAll();
-        this.props.history.push('/login')
-    }
+			});
+		carttmp[carttmp.length - 1].productlist = this.props.productList;
+		await query.doc(this.props.cart_id).set({cartlist: carttmp});
+		this.props.logout();
+		this.props.clearAll();
+		this.props.history.push("/login");
+	};
 	render() {
+		console.log("notification", this.props.notification);
 		return (
 			<div className="row-flex navbar textM">
+				{this.props.notification &&
+					this.props.isLoggedIn &&
+					this.props.notification.map(() => {
+						console.log("fgfsdfgdsfa");
+					})}
 				<img
 					style={{
 						width: "2%",
@@ -110,14 +123,16 @@ class Navbar extends Component {
 						cursor: "pointer",
 					}}
 					onClick={() => {
-						this.props.history.push("./notification");
+						this.props.history.push(
+							"/" + this.props.username + "/notification"
+						);
 					}}
 					src={notification}
 					alt="notification"
 				/>
 				<Link
 					className="link"
-					to="/notification"
+					to={"/" + this.props.username + "/notification"}
 					style={{
 						fontSize: "1.4vw",
 						margin: "-0.14vw 0 0 0",
@@ -150,7 +165,7 @@ class Navbar extends Component {
 							style={{left: "76.5vw", width: "13vw"}}
 						>
 							<NavbarList
-								to={"/"+this.props.username+'/orders'}
+								to={"/" + this.props.username + "/orders"}
 								name="การซื้อของฉัน"
 								style={{
 									marginTop: "-0.5vw",
@@ -159,7 +174,7 @@ class Navbar extends Component {
 							/>
 							<hr />
 							<NavbarList
-								to="/about"
+								to={"/" + this.props.username + "/sales"}
 								name="การขายของฉัน"
 								style={{
 									textIndent: "1.5vw",
@@ -188,8 +203,8 @@ class Navbar extends Component {
 									textIndent: "1.5vw",
 									cursor: "pointer",
 								}}
-                                onClick={() => {
-                                    this.sendCartData();
+								onClick={() => {
+									this.sendCartData();
 								}}
 							>
 								Log out
@@ -226,7 +241,14 @@ class Navbar extends Component {
 						</Link>
 					</>
 				)}
-				<Link className="link" to={this.props.isLoggedIn?"/"+this.props.username+"/cart":'/login'}>
+				<Link
+					className="link"
+					to={
+						this.props.isLoggedIn
+							? "/" + this.props.username + "/cart"
+							: "/login"
+					}
+				>
 					{this.props.numberOfItems !== 0 ? (
 						<div
 							style={{
@@ -244,8 +266,7 @@ class Navbar extends Component {
 								top: "0.15vw",
 								zIndex: "10",
 							}}
-                        >
-
+						>
 							{this.props.numberOfItems > 99
 								? "99+"
 								: this.props.numberOfItems}
@@ -272,18 +293,22 @@ const mapStateToProps = (state) => {
 	return {
 		isLoggedIn: state.loginReducer.isLoggedIn,
 		username: state.loginReducer.username,
-        numberOfItems: state.addToCartReducer.numberOfItems,
-        cart_id: state.addToCartReducer.id,
-        productList: state.addToCartReducer.productList
+		numberOfItems: state.addToCartReducer.numberOfItems,
+		cart_id: state.addToCartReducer.id,
+		productList: state.addToCartReducer.productList,
+		notification: state.firestore.ordered.notification,
 	};
 };
 const mapDispatchToProps = (dispatch) => {
 	return {
-        logout: () => dispatch(logout()),
-        clearAll:()=>dispatch(clearAll())
+		logout: () => dispatch(logout()),
+		clearAll: () => dispatch(clearAll()),
 	};
 };
 export default compose(
 	connect(mapStateToProps, mapDispatchToProps),
+	firestoreConnect((props) => {
+		return [{collection: "notification"}];
+	}),
 	withRouter
 )(Navbar);
