@@ -1,7 +1,13 @@
 import React, {Component} from "react";
 import LoginField from "./LoginField";
 import {withRouter} from "react-router-dom";
-import {login, importCart,updateNotification,finish} from "../redux/index";
+import {
+	login,
+	importCart,
+	updateNotification,
+	finish,
+	importShop,
+} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Input from "./Input";
@@ -20,30 +26,22 @@ class Login extends Component {
 			cart_id: "",
 			cart: "",
 			noti_id: "",
+			shop_id: "",
 		};
 	}
 	getCart = async () => {
-		let query = firebase.firestore().collection("user");
-		let cart_id;
+		let query = firebase.firestore().collection("cart");
 		await query
-			.where("username", "==", this.state.username)
-			.get()
-			.then((querysnapshot) => {
-				querysnapshot.forEach((documentsnapshot) => {
-					cart_id = documentsnapshot.data().cartid;
-					this.setState({cart_id: documentsnapshot.data().cartid});
-				});
-			});
-		let carttmp = "";
-		query = firebase.firestore().collection("cart");
-		await query
-			.doc(cart_id)
+			.doc(this.state.cart_id)
 			.get()
 			.then((documentsnapshot) => {
-				carttmp = documentsnapshot.data().cartlist;
+				this.props.importCart(
+					this.state.cart_id,
+					documentsnapshot.data().cartlist[documentsnapshot.data().cartlist.length - 1]
+						.productlist
+				);
+                this.props.login(this.state.username);
 			});
-		this.props.importCart(cart_id, carttmp[carttmp.length - 1].productlist);
-		this.props.login(this.state.username);
 	};
 
 	getData = (e, data, what = true) => {
@@ -64,7 +62,11 @@ class Login extends Component {
 			.get()
 			.then((querysnapshot) => {
 				querysnapshot.forEach((documentsnapshot) => {
-					this.setState({username: documentsnapshot.data().username});
+					this.setState({
+						username: documentsnapshot.data().username,
+						cart_id: documentsnapshot.data().cartid,
+                    });
+					this.props.importShop(documentsnapshot.data().store_id);
 				});
 			});
 	};
@@ -76,12 +78,11 @@ class Login extends Component {
 			.limit(1)
 			.get()
 			.then((querysnapshot) => {
-				console.log("fddssss", querysnapshot);
 				querysnapshot.forEach((documentsnapshot) => {
 					this.props.updateNotification(
 						documentsnapshot.data().notification_list.length
-                    );
-                    this.props.finish()
+					);
+					this.props.finish();
 				});
 			})
 			.catch(function (error) {
@@ -174,14 +175,15 @@ class Login extends Component {
 					</button>
 				</div>
 			);
-		} else {
-			if (
-				this.props.history.location.state &&
-				(this.props.history.location.state.includes("menu") ||
-					this.props.history.location.state.includes(
+        } else {
+            // console.log(this.props.history.location)
+			if (this.props.history.location.state.from&&
+				this.props.history.location.state.from!=='' &&
+				(this.props.history.location.state.from.includes("menu") ||
+					this.props.history.location.state.from.includes(
 						this.props.username
 					) ||
-					this.props.history.location.state.includes("shop"))
+					this.props.history.location.state.from.includes("shop"))
 			) {
 				this.props.history.goBack();
 			} else {
@@ -200,8 +202,9 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		login: (username) => dispatch(login(username)),
 		importCart: (id, productList) => dispatch(importCart(id, productList)),
-        updateNotification: (length) => dispatch(updateNotification(length)),
-        finish: ()=> dispatch(finish())
+		updateNotification: (length) => dispatch(updateNotification(length)),
+		finish: () => dispatch(finish()),
+		importShop: (id) => dispatch(importShop(id)),
 	};
 };
 

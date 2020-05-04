@@ -5,7 +5,6 @@ import {connect} from "react-redux";
 import {compose} from "redux";
 import {withRouter, Redirect} from "react-router-dom";
 import EmptyCart from "./EmptyCart";
-// import firebase from "../database/firebase";
 
 class Cart extends Component {
 	constructor(props) {

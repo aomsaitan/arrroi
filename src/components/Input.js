@@ -123,14 +123,13 @@ class Input extends Component {
 				case "Email":
 				case "อีเมล":
 					if (
-						!/[A-Za-z0-9!#$%&"'*+-/=?^_`{|}~(),:;<>@[\].]+/g.test(
+						!/[a-z0-9!#$%&"'*+-/=?^_`{|}~(),:;<>@[\].]+/g.test(
 							event.key
 						)
 					)
 						event.preventDefault();
 					break;
 				case "เบอร์โทรศัพท์":
-					// case (event.targ/('daffdsdaaf')
 					if (
 						!/[\d]+/g.test(event.key) &&
 						event.key !== "ArrowLeft" &&
@@ -140,7 +139,6 @@ class Input extends Component {
 						event.key !== "Enter" &&
 						event.key !== "Delete"
 					)
-						// console.log('dadfsffs',event.key)
 						event.preventDefault();
 					break;
 				case "ที่อยู่":

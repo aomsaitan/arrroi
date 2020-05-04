@@ -25,6 +25,8 @@ import {createFirestoreInstance} from "redux-firestore";
 import firebase from "./database/firebase";
 import {ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MySales from "./components/MySales";
+import MySaleList from "./components/MySaleList";
 const rrfConfig = {
 	userProfile: "users",
 	userFirestoreForProfile: true,
@@ -119,7 +121,12 @@ class App extends Component {
 								<Route
 									path="/:name/sales"
 									exact
-									component={MyHistory}
+									component={MySaleList}
+								/>
+								<Route
+									path="/:name/sales/:customer"
+									exact
+									component={MySales}
 								/>
 								<Route
 									path="/:name/notification"

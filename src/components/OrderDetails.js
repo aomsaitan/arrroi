@@ -6,20 +6,19 @@ import {connect} from "react-redux";
 import {compose} from "redux";
 import {withRouter, Redirect} from "react-router-dom";
 import firebase from "../database/firebase";
-import {newCart} from '../redux/index'
+import {newCart} from "../redux/index";
 
 class OrderDetails extends Component {
 	constructor(props) {
 		super(props);
 
-        // window.scrollTo(0, 0)
+		// window.scrollTo(0, 0)
 		this.state = {userDetail: ""};
-    }
-    componentWillMount = () => {
-    }
+	}
+	componentWillMount = () => {};
 	componentDidMount = async () => {
-        window.scrollTo(0,0)
-        console.log('woo hoo')
+		window.scrollTo(0, 0);
+		console.log("woo hoo");
 		await this.importData();
 		let x = document.getElementsByName("radio payment");
 		x[0].checked = "checked";
@@ -52,12 +51,14 @@ class OrderDetails extends Component {
 				carttmp.push({
 					created_at: firebase.firestore.Timestamp.now(),
 					payment_status: Boolean(false),
+					shop_check: Boolean(false),
+					customer_check: Boolean(false),
 					price: 0,
 					productlist: [],
 				});
-                await query.doc(this.props.cart_id).set({ cartlist: carttmp });
-                this.props.newCart()
-                this.props.history.push("/" + this.props.username + "/orders");
+				await query.doc(this.props.cart_id).set({cartlist: carttmp});
+				this.props.newCart();
+				this.props.history.push("/" + this.props.username + "/orders");
 			});
 	};
 
@@ -225,8 +226,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-        newCart: () => dispatch(newCart()),
+	return {
+		newCart: () => dispatch(newCart()),
 	};
 };
 export default compose(

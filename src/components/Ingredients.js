@@ -3,6 +3,7 @@ import BuyProduct from "./BuyProduct";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
 import Image from "./Image";
+import MyShopField from "./MyShopField";
 
 class Ingredients extends Component {
 	constructor(props) {
@@ -13,36 +14,44 @@ class Ingredients extends Component {
 			id: this.props.match.params.id,
 			productList: [],
 			loading: true,
+			detail: "",
 		};
 	}
 
 	componentDidMount = async () => {
-        window.scrollTo(0,0)
+		window.scrollTo(0, 0);
 		if (this.state.type === "menu") await this.showpdl_menu();
 		else await this.showpdl_store();
 	};
 	showpdl_store = async () => {
-		let tmp=[];
-        let query = firebase.firestore().collection("store");
-        await query
+		let tmp = [];
+		let query = firebase.firestore().collection("store");
+		await query
 			.doc(this.state.id)
 			.get()
-            .then((documentsnapshot) => {
-                this.setState({name:documentsnapshot.data().name})
+			.then((documentsnapshot) => {
+				this.setState({
+					name: documentsnapshot.data().name,
+					detail: documentsnapshot.data(),
+				});
 			});
-        query = firebase.firestore().collection("product");
+		query = firebase.firestore().collection("product");
 		await query
 			.where("store_id", "==", this.state.id)
 			.get()
 			.then((querysnapshot) => {
-                querysnapshot.forEach((documentsnapshot) => {
-                    console.log(documentsnapshot.data())
-					tmp.push(Object.assign({},documentsnapshot.data(),{product_id:documentsnapshot.id}));
-                    console.log(tmp)
+				querysnapshot.forEach((documentsnapshot) => {
+					console.log(documentsnapshot.data());
+					tmp.push(
+						Object.assign({}, documentsnapshot.data(), {
+							product_id: documentsnapshot.id,
+						})
+					);
+					console.log(tmp);
 				});
-            });
-            console.log("sttst",tmp)
-        
+			});
+		console.log("sttst", tmp);
+
 		this.setState({
 			productList: tmp,
 			loading: false,
@@ -89,16 +98,31 @@ class Ingredients extends Component {
 		});
 	};
 	render() {
-        console.log(this.state)
+		console.log(this.state);
 		if (!this.state.loading)
 			return (
 				<>
-					<h1 className="menu-title textS" style={{marginBottom:'2.5vw'}}>{this.state.name}</h1>
+					{!this.props.match.url.includes("shop") ? (
+						<h1
+							className="menu-title textS"
+							style={{marginBottom: "2.5vw"}}
+						>
+							{this.state.name}
+						</h1>
+					) : null}
 					<Image
 						alt="background"
 						className="BG"
 						nameFood={this.state.name}
 					/>
+					{this.props.match.url.includes("shop") ? (
+						<MyShopField
+							nameShop={this.state.detail.name}
+							nameFood={this.state.detail.name}
+							nameIcon="pencil"
+							des={this.state.detail.detail}
+						/>
+					) : null}
 					{this.state.productList.map((product, i) => {
 						return (
 							<BuyProduct

@@ -4,7 +4,13 @@ import menu from "../images/menu.png";
 import shopping_cart from "../images/shopping-cart.png";
 import notification from "../images/notification.png";
 import {withRouter, Link} from "react-router-dom";
-import {logout, updateNotification, clearAll, finish} from "../redux/index";
+import {
+	logout,
+	updateNotification,
+	clearAll,
+	finish,
+	clearShop,
+} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import NavbarList from "./NavbarList";
@@ -67,17 +73,15 @@ class Navbar extends Component {
 		carttmp[carttmp.length - 1].productlist = this.props.productList;
 		await query.doc(this.props.cart_id).set({cartlist: carttmp});
 		this.props.logout();
-		this.props.clearAll();
-		console.log(this.props.history.pathname);
-		console.log(this.props.history.location.pathname);
-		console.log(this.props.match);
+        this.props.clearAll();
+        this.props.clearShop()
 		this.props.history.push({
 			pathname: "/login",
 			state: this.props.location.pathname,
 		});
 	};
 	notify = () => {
-        console.log('dsdffddsfdffdssfddsdf')
+		console.log("dsdffddsfdffdssfddsdf");
 		let x = this.props.notification[0].notification_list.slice();
 		toast.info(x.reverse()[0].message, {
 			position: toast.POSITION.TOP_RIGHT,
@@ -89,7 +93,7 @@ class Navbar extends Component {
 		return null;
 	};
 	render() {
-        // console.log(this.props.notification,this.props.isFinished)
+		// console.log(this.props.notification,this.props.isFinished)
 		return (
 			<div className="row-flex navbar textM">
 				{this.props.notification &&
@@ -353,9 +357,8 @@ const mapDispatchToProps = (dispatch) => {
 		logout: () => dispatch(logout()),
 		clearAll: () => dispatch(clearAll()),
 		updateNotification: (length) => dispatch(updateNotification(length)),
-		finish: () => {
-			dispatch(finish());
-		},
+		finish: () => dispatch(finish()),
+		clearShop: () => dispatch(clearShop()),
 	};
 };
 export default compose(

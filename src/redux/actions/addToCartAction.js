@@ -29,14 +29,13 @@ export const updateCart = (index, quantity, size) => {
 		},
 	};
 };
-export const importCart = (id, productList, numberOfItems, price) => {
+export const importCart = (id, productList) => {
 	return {
 		type: IMPORT_CART,
 		payload: {
 			productList: productList,
 			id: id,
-			numberOfItems: numberOfItems,
-			price: price,
+			
 		},
 	};
 };

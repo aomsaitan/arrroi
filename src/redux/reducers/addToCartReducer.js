@@ -24,7 +24,7 @@ export const addToCartReducer = (state = initialState, action) => {
 				for (let i = 0; i < state.productList.length; i++) {
 					if (
 						state.productList[i].name === action.payload.name &&
-                        state.productList[i].size === action.payload.size
+						state.productList[i].size === action.payload.size
 					) {
 						return {
 							...state,
@@ -51,7 +51,8 @@ export const addToCartReducer = (state = initialState, action) => {
 								...state.productList.slice(i + 1),
 							],
 							totalPrice: state.totalPrice + action.payload.price,
-							numberOfItems:state.numberOfItems + action.payload.quantity,
+							numberOfItems:
+								state.numberOfItems + action.payload.quantity,
 						};
 					}
 				}
@@ -127,7 +128,10 @@ export const addToCartReducer = (state = initialState, action) => {
 			return {
 				...state,
 				cartList: [
-					...state.cartList.slice(0, action.payload),
+					...state.cartList.slice(0,action.payload),
+					Object.assign({}, state.cartList[action.payload], {
+						customer_check: true,
+					}),
 					...state.cartList.slice(action.payload + 1),
 				],
 			};

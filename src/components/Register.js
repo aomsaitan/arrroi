@@ -118,7 +118,9 @@ class Register extends Component {
 				cartlist: [
 					{
 						created_at: firebase.firestore.Timestamp.now(),
-						payment_status: Boolean(false),
+                        payment_status: Boolean(false),
+                        customer_check: Boolean(false),
+                        shop_check:Boolean(false),
 						price: 0,
 						productlist: [],
 					},
@@ -133,13 +135,19 @@ class Register extends Component {
 				console.log(error);
 			});
 	};
-	addNoticationToFirestore = async () => {
+    addNoticationToFirestore = async () => {
+        console.log(this.state.บัญชีผู้ใช้,'usernamemeeeeee')
 		let db = firebase.firestore().collection("notification").doc();
 		await db
 			.set({
-				notification: [],
+				notification_list: [],
 				username: this.state.บัญชีผู้ใช้,
 			})
+			.then(
+				this.setState({
+					notiid: db.id,
+				})
+			)
 			.catch(function (error) {
 				console.log(error);
 			});
@@ -158,6 +166,7 @@ class Register extends Component {
 				cartid: this.state.cartid,
 				menu: [],
 				store_id: "",
+				noti_key: this.state.notiid,
 			})
 			.catch(function (error) {
 				console.log(error);

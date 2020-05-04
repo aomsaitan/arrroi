@@ -3,11 +3,12 @@ import Image from './Image'
 class MyHistoryField extends Component {
     render() {
         return (
-            <div className="MySalesField textS"
+            <div className={"MySalesField textS "+ (this.props.type ? this.props.type : "")} onClick ={this.props.onClick}
                 style={
                     this.props.color === "brown"
                         ? { backgroundColor: "#814A2C" }
                         : { backgroundColor: "#4A362B" }
+                    
                 }>
                 <div className="column-flex" style = {{width:"calc(0vw + 82%)",marginTop:"0.5%",marginBottom:"calc(0vw + 1%)",marginLeft:"calc(0vw + 2%)"}}>
                     <div className="row-flex" style = {{marginTop:"calc(0vw + 1%)"}}>

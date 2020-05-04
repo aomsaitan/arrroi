@@ -41,15 +41,15 @@ class BuyProduct extends Component {
 			};
 			console.log(product);
 			this.props.addToCart(product);
-			toast.info(
-				<span >
+			toast(
+				<span style={{color: "#814A2C"}}>
 					คุณได้เพิ่ม&nbsp;
-					<span style={{color: "white"}}>
+					<span style={{color: "black"}}>
 						[{this.props.nameOfProduct}]
 					</span>
 					&nbsp;เข้ารถเข็นแล้ว
 				</span>,
-				{
+                {
 					position: toast.POSITION.TOP_RIGHT,
 					autoClose: 2000,
 					pauseOnFocusLoss: false,

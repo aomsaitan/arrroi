@@ -1376,7 +1376,49 @@ h2.notification {
     white-space: normal;
     word-break: break-all;
 }
-.toast {
-    top:50em;
-    right:1.5em
+div.clickable {
+    cursor: pointer;
+}
+
+/* ////////////////////////////////////////////////////MyShopField///////////////////////////////////////////////////// */
+
+.MyShop{
+    width: calc(0vw + 70%);
+    margin-left: calc(0vw + 15%);
+}
+.shopcover{
+    width: calc(0vw + 20%);
+    height: 13.5vw;
+    
+}
+.shopcover img{
+    width: 100%;
+    height: 13.5vw;
+    object-fit: cover;
+    
+}
+.MyShopdes{
+    width: calc(0vw + 79%);
+    margin-left: calc(0vw + 1%);
+    border: 2px solid #4A362B;
+    background-color: white;
+}
+.MyShopdes p{
+    font-size: 1.2vw;    
+    color: black;
+}
+.MyShopH{
+    width: 100%;
+    height: 3vw;
+    background-color: #4A362B;
+}
+.MyShopH p{
+    font-size: 1.5vw;    
+    color: white;
+    
+}
+.MyShopH img{
+    margin: calc(0vw + 0.5%) calc(0vw + 3%) 0% calc(0vw + 2%);
+    width: calc(0vw + 3.5%);
+    float: left;
 }
