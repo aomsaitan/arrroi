@@ -6,7 +6,8 @@ import {withRouter, Redirect} from "react-router-dom";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
 import {connect} from "react-redux";
-import {compose} from "redux";
+import { compose } from "redux";
+import {toast} from 'react-toastify'
 class Register extends Component {
 	constructor() {
 		super();
@@ -91,7 +92,20 @@ class Register extends Component {
 			.then((u) => {
 				this.addCartToFirestore();
 				this.addNoticationToFirestore();
-				this.addDataToFirestore();
+                this.addDataToFirestore();
+                toast.info(
+                    <>
+                        <div align="center" style={{color: "white"}}>
+                            คุณได้สมัครสมาชิกเรียบร้อยแล้ว
+                        </div>
+                    </>,
+                    {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 3000,
+                        pauseOnFocusLoss: false,
+                        closeButton: true,
+                    }
+                );
 				this.props.history.push({
 					pathname: "/login",
 					state: {
