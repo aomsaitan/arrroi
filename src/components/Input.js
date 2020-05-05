@@ -19,13 +19,13 @@ class Input extends Component {
 					this.props.size
 			  )
 			: console.log("huh");
-    }
-    componentWillMount = () => {
-        if(this.props.onRef)this.props.onRef(undefined)
-    }
-    componentDidMount = () => {
-        if(this.props.onRef)this.props.onRef(this)
-    }
+	}
+	componentWillMount = () => {
+		if (this.props.onRef) this.props.onRef(undefined);
+	};
+	componentDidMount = () => {
+		if (this.props.onRef) this.props.onRef(this);
+	};
 	addValue = (event) => {
 		this.setState(
 			(prevState) => ({
@@ -216,13 +216,20 @@ class Input extends Component {
 			return (
 				<>
 					<input
-						className="button textS"
+						className={
+							"button textS " +
+							(this.props.boundary === 0 ? "gray" : "normal")
+						}
 						type="button"
 						value="-"
+						disabled={this.props.boundary === 0 ? "false" : null}
 						onClick={this.decreaseValue}
 					/>
 					<input
-						className="numOfProduct textS"
+						className={
+							"numOfProduct textS " +
+							(this.props.boundary === 0 ? "gray" : "normal")
+						}
 						id={this.props.id}
 						value={this.state.text}
 						onChange={this.handleChange}
@@ -234,11 +241,16 @@ class Input extends Component {
 						onClick={(e) => {
 							e.target.select();
 						}}
+						disabled={this.props.boundary === 0 ? "false" : null}
 					/>
 					<input
-						className="button textS"
+						className={
+							"button textS " +
+							(this.props.boundary === 0 ? "gray" : "normal")
+						}
 						type="button"
 						value="+"
+						disabled={this.props.boundary === 0 ? "false" : null}
 						onClick={this.addValue}
 					/>
 					&nbsp;&nbsp;{this.props.unitOfProduct}
