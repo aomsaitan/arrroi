@@ -84,23 +84,23 @@ class MenuPage extends Component {
 					<Slideshow nameFood={this.state.recommend} />
 					<div className="row-flex region-container">
 						<RegionalMenu
-							src={ข้าวผัดกุ้ง}
-							alt="ข้าวผัดกุ้ง"
+							alt="อาหารเหนือ"
 							title="อาหารเหนือ"
+                            nameFood="อาหารเหนือ"
 						/>
 						<RegionalMenu
-							src={ข้าวผัดกุ้ง}
-							alt="ข้าวผัดกุ้ง"
+							alt="อาหารอีสาน"
 							title="อาหารอีสาน"
+                            nameFood="อาหารอีสาน"
 						/>
 						<RegionalMenu
-							src={ข้าวผัดกุ้ง}
-							alt="ข้าวผัดกุ้ง"
+                            alt="อาหารกลาง"
+                            nameFood="อาหารกลาง"
 							title="อาหารกลาง"
 						/>
-						<RegionalMenu
-							src={ข้าวผัดกุ้ง}
-							alt="ข้าวผัดกุ้ง"
+                        <RegionalMenu
+                            nameFood="อาหารใต้"
+							alt="อาหารใต้"
 							title="อาหารใต้"
 						/>
 					</div>

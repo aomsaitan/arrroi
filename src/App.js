@@ -51,7 +51,6 @@ class App extends Component {
 							<ToastContainer
                                 newestOnTop={true}
                                 bodyClassName="textS toast"
-                                // classname="toast"
 								style={{
 									wordWrap: "break-word",
 									whiteSpace: "normal",

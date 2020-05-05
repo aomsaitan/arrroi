@@ -124,7 +124,7 @@ class Navbar extends Component {
 				/>
 				<div id="dropdown" className="dropdown">
 					<NavbarList
-						to="/search"
+						to="/about"
 						name="- ค้นหาเมนู"
 						style={{marginTop: "-0.5vw"}}
 					/>
