@@ -43,13 +43,15 @@ class BuyProduct extends Component {
 			this.props.addToCart(product);
 			toast(
 				<>
-					<div align= 'center'style={{color: "#814A2C"}}>
+					<div align="center" style={{color: "#814A2C"}}>
 						คุณได้เพิ่ม&nbsp;
 						<span style={{color: "black"}}>
 							[{this.props.nameOfProduct}]
 						</span>
 					</div>
-					<div align= 'center'style={{color: "#814A2C"}}>&nbsp;เข้ารถเข็นแล้ว</div>
+					<div align="center" style={{color: "#814A2C"}}>
+						&nbsp;เข้ารถเข็นแล้ว
+					</div>
 				</>,
 				{
 					position: toast.POSITION.TOP_RIGHT,
@@ -75,12 +77,13 @@ class BuyProduct extends Component {
 						size: i,
 						size_name: this.props.option[i].size,
 					}),
-					() => {
+                    () => {
+                        console.log(this.props.option[this.state.size].quantity,this.state.quantity,'BEFORE IF')
 						if (
-							this.props.quantity >
+							this.state.quantity >
 							this.props.option[this.state.size].quantity
 						) {
-							console.log(this.child);
+                            console.log(this.props.option[this.state.size].quantity,this.state.size,'BEFORE CHILD');
 							this.child.setText(
 								this.props.option[this.state.size].quantity
 							);
@@ -140,7 +143,9 @@ class BuyProduct extends Component {
 					<p style={{fontSize: "2.2vw", margin: "1vw 0 1vw 0"}}>
 						ราคา{" "}
 						{this.props.option[this.state.size].price *
-							this.state.quantity}{" "}
+						(this.state.quantity
+							? this.state.quantity
+							: 0)}{" "}
 						บาท
 					</p>
 					<div
@@ -199,14 +204,25 @@ class BuyProduct extends Component {
 						</div>
 					) : (
 						<button
-							className={"addToCartButton textS "+(this.props.option[this.state.size].quantity===0? " gray":" normal")}
+							className={
+								"addToCartButton textS " +
+								(this.props.option[this.state.size].quantity ===
+								0
+									? " gray"
+									: " normal")
+							}
 							align="center"
 							style={
 								this.props.color === "brown"
 									? {backgroundColor: "#4A362B"}
 									: {backgroundColor: "#814A2C"}
-                            }
-                                disabled= {this.props.option[this.state.size].quantity===0? "false":null}
+							}
+							disabled={
+								this.props.option[this.state.size].quantity ===
+								0
+									? "false"
+									: null
+							}
 							onClick={this.addItem}
 						>
 							<Image

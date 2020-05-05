@@ -71,18 +71,18 @@ class Input extends Component {
 		);
 	};
 	setText = (quantity) => {
+        console.log(quantity,'CHILD',this.props.index)
 		this.setState(
 			{
 				text: quantity,
-			},
-			() => {
-				this.props.updateCart(
-					this.props.index,
-					this.state.text,
-					this.props.size
-				);
-			}
-		);
+			},			
+        );
+        if(this.props.index)
+        this.props.updateCart(
+            this.props.index,
+            quantity,
+            this.props.size
+        );
 	};
 	handleChange = (event) => {
 		this.setState({
@@ -91,7 +91,6 @@ class Input extends Component {
 		console.log("handlechange");
 		if (event.target.id.includes("button")) {
 			if (
-				event.target.value === "" ||
 				parseInt(event.target.value) === 0
 			) {
 				event.target.value = 1;
@@ -129,7 +128,26 @@ class Input extends Component {
 			});
 			this.props.pass(y, "", false);
 		}
-	};
+    };
+    setCheck = (event) => {
+        if (event.target.id.includes("button")) {
+            if (
+                event.target.value === ""
+            ) {
+                event.target.value = 1;
+            }
+            this.setState({
+				text: event.target.value,
+			});
+			this.props.pass(event, parseInt(event.target.value));
+			if (this.props.id.split(" ").length > 2)
+				this.props.updateCart(
+					this.props.index,
+					this.state.text,
+					this.props.size
+				);
+        }
+    }
 	checkInput = (event) => {
 		if (this.props.id.includes("button")) {
 			if (
@@ -235,7 +253,8 @@ class Input extends Component {
 						onChange={this.handleChange}
 						onPaste={(event) => {
 							event.preventDefault();
-						}}
+                        }}
+                        onBlur={this.setCheck}
 						onKeyDown={this.checkInput}
 						maxLength={this.props.maxLength}
 						onClick={(e) => {
