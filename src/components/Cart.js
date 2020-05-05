@@ -84,7 +84,7 @@ class Cart extends Component {
 					<>
 						<div align="center" style={{color: "black"}}>
 							สินค้า&nbsp;
-							<span style={{color: "white"}}>[{product.name}]</span>
+							<span style={{color: "whites"}}>[{product.name}]</span>
 						</div>
 						<div align="center" style={{color: "black"}}>
 							&nbsp;ไม่เหลือในสต๊อกแล้ว
