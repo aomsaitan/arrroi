@@ -6,8 +6,8 @@ import {withRouter, Redirect} from "react-router-dom";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
 import {connect} from "react-redux";
-import { compose } from "redux";
-import {toast} from 'react-toastify'
+import {compose} from "redux";
+import {toast} from "react-toastify";
 class Register extends Component {
 	constructor() {
 		super();
@@ -92,20 +92,20 @@ class Register extends Component {
 			.then((u) => {
 				this.addCartToFirestore();
 				this.addNoticationToFirestore();
-                this.addDataToFirestore();
-                toast.info(
-                    <>
-                        <div align="center" style={{color: "white"}}>
-                            คุณได้สมัครสมาชิกเรียบร้อยแล้ว
-                        </div>
-                    </>,
-                    {
-                        position: toast.POSITION.TOP_RIGHT,
-                        autoClose: 3000,
-                        pauseOnFocusLoss: false,
-                        closeButton: true,
-                    }
-                );
+				this.addDataToFirestore();
+				toast.info(
+					<>
+						<div align="center" style={{color: "white"}}>
+							คุณได้สมัครสมาชิกเรียบร้อยแล้ว
+						</div>
+					</>,
+					{
+						position: toast.POSITION.TOP_RIGHT,
+						autoClose: 3000,
+						pauseOnFocusLoss: false,
+						closeButton: true,
+					}
+				);
 				this.props.history.push({
 					pathname: "/login",
 					state: {
@@ -132,9 +132,9 @@ class Register extends Component {
 				cartlist: [
 					{
 						created_at: firebase.firestore.Timestamp.now(),
-                        payment_status: Boolean(false),
-                        customer_check: Boolean(false),
-                        shop_check:Boolean(false),
+						payment_status: Boolean(false),
+						customer_check: Boolean(false),
+						shop_check: Boolean(false),
 						price: 0,
 						productlist: [],
 					},
@@ -149,12 +149,20 @@ class Register extends Component {
 				console.log(error);
 			});
 	};
-    addNoticationToFirestore = async () => {
-        console.log(this.state.บัญชีผู้ใช้,'usernamemeeeeee')
+	addNoticationToFirestore = async () => {
+		console.log(this.state.บัญชีผู้ใช้, "usernamemeeeeee");
 		let db = firebase.firestore().collection("notification").doc();
 		await db
 			.set({
-				notification_list: [],
+				notification_list: [
+					{
+						message:
+							"ยินดีต้อนรับเข้าสู่ครอบครัว ARRROI คุณสามารถเลือกดูสินค้า และเมนูการทำอาหารที่หลากหลายได้ที่นี่ รอช้าอยู่ใย รีบไปซื้อสินค้ากันเลย",
+						type: "announce",
+						title: "สมัครสมาชิกสำเร็จ",
+						time: firebase.firestore.Timestamp.now(),
+					},
+				],
 				username: this.state.บัญชีผู้ใช้,
 			})
 			.then(
