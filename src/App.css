@@ -385,13 +385,13 @@ h1.aboutUs {
     font-size: 4vw;
 }
 
-p.us {
+div.us {
     font-size: 2.5vw;
     display: flex;
     justify-content: center;
 }
 
-p.us>div {
+div.us>div {
     padding-left: 0vw;
     margin-right: 2vw;
 }

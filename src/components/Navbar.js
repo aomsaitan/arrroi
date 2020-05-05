@@ -176,7 +176,9 @@ class Navbar extends Component {
 					}}
 					onClick={() => {
 						this.props.history.push(
-							"/" + this.props.username + "/notification"
+							this.props.username
+								? "/" + this.props.username + "/notification"
+								: "/notification"
 						);
 					}}
 					src={notification}
@@ -184,7 +186,11 @@ class Navbar extends Component {
 				/>
 				<Link
 					className="link"
-					to={"/" + this.props.username + "/notification"}
+					to={
+						this.props.username
+							? "/" + this.props.username + "/notification"
+							: "/notification"
+					}
 					style={{
 						fontSize: "1.4vw",
 						margin: "-0.14vw 0 0 0",

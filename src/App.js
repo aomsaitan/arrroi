@@ -132,6 +132,11 @@ class App extends Component {
 									exact
 									component={Notification}
 								/>
+								<Route
+									path="/notification"
+									exact
+									component={Notification}
+								/>
 							</Switch>
 						</Router>
 					</ReactReduxFirebaseProvider>

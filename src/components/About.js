@@ -5,7 +5,7 @@ const About = () => (
 		<h1 className="aboutUs textM" align="center">
 			About us
 		</h1>
-		<p className="us textS">
+		<div className="us textS">
 			<div style={{ flexBasis: "15vw" }}>
 				นาย ณชวนนท์
 				<br />
@@ -41,7 +41,7 @@ const About = () => (
 				61011104
 				<br />
 			</div>
-		</p>
+		</div>
 	</>
 );
 
