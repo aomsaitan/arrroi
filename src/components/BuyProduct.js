@@ -49,7 +49,7 @@ class BuyProduct extends Component {
 					</span>
 					&nbsp;เข้ารถเข็นแล้ว
 				</span>,
-                {
+				{
 					position: toast.POSITION.TOP_RIGHT,
 					autoClose: 2000,
 					pauseOnFocusLoss: false,
@@ -85,6 +85,7 @@ class BuyProduct extends Component {
 		}
 	};
 	render() {
+        console.log(this.props)
 		return (
 			<div
 				className="storeBox textS"
@@ -148,6 +149,10 @@ class BuyProduct extends Component {
 						index={this.props.index}
 						size={this.state.size}
 					/>
+					<span>
+						สินค้าที่เหลือ&nbsp;
+						{this.props.option[this.state.size].quantity}&nbsp;ชิ้น
+					</span>
 					{this.props.type === "x" ? (
 						<div>
 							<Image

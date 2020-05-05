@@ -6,7 +6,6 @@ import Loading from "./Loading";
 import {updateShop} from "../redux/index";
 import {Redirect} from "react-router-dom";
 import EmptyOrder from "./EmptyOrder";
-import EmptyBuy from "./EmptyBuy";
 import {withRouter} from "react-router-dom";
 import MyHistoryField from "./MyHistoryField";
 
@@ -20,8 +19,10 @@ class MySalesList extends Component {
 			productList: [],
 			cart: [],
 			store: "",
-            userDetail: "",
-            tmp:false
+			userDetail: "",
+			tmp: false,
+			realCartIndex: "",
+			alt: true,
 		};
 	}
 	componentDidMount = async () => {
@@ -29,44 +30,17 @@ class MySalesList extends Component {
 		if (this.props.store_id) {
 			await this.importPayment();
 			await this.getStoreName();
+			this.setState({loading: false});
 		}
 	};
 	getStoreName = async () => {
-        console.log('getStorename')
+		console.log("getStorename");
 		let query = firebase.firestore().collection("store");
 		await query
 			.doc(this.props.store_id)
 			.get()
 			.then((documentsnapshot) => {
 				this.setState({store: documentsnapshot.data().name});
-			});
-	};
-	fetchProduct = async (product) => {
-		let query = firebase.firestore().collection("product");
-		await query
-			.doc(product.id.split(" ")[0])
-			.get()
-			.then((documentsnapshots) => {
-				if (documentsnapshots.data().store_id === this.props.store_id) {
-					this.setState(
-						(prevState) => {
-							return {
-								...prevState,
-								tmp: true,
-								productList: [
-									...prevState.productList,
-									product,
-								],
-							};
-						},
-						() => {
-							console.log(this.state.productList, "productList",this.state.tmp);
-						}
-                    );
-				}
-			})
-			.catch((e) => {
-				console.log(e.message);
 			});
 	};
 	fetchUserDetail = async (cart_id) => {
@@ -77,63 +51,37 @@ class MySalesList extends Component {
 			.get()
 			.then((querysnapshot) => {
 				querysnapshot.forEach((documentsnapshot) => {
-					this.setState(
-						{
-							userDetail: documentsnapshot.data(),
-						},
-						() => {
-							console.log(this.state.userDetail, "userDetail");
-						}
-					);
-					// return null;
+					this.setState({
+						userDetail: documentsnapshot.data(),
+						userId: documentsnapshot.id,
+					});
 				});
 			})
 			.catch((e) => {
 				console.log(e.message);
 			});
 	};
-	pushCart =  () => {
-		console.log(this.state.tmp, "tmp");
-		// if (this.state.tmp) {
-		this.setState(
-			(prevState) => {
+	summary = () => {
+		if (this.state.cart.length > 0) {
+			this.setState((prevState) => {
 				return {
 					...prevState,
-					cart: [...prevState.cart, this.state.productList],
+					orderList: [
+						...prevState.orderList,
+						{
+							userDetail: prevState.userDetail,
+							userId: prevState.userId,
+							cartList: prevState.cart,
+						},
+					],
+					loading: false,
+					alt: false,
 				};
-			},
-			() => {
-				console.log(this.state.cart, "cart");
-			}
-		);
-		// return null;
-		// }
-	};
-	summary =  () => {
-		if (this.state.productList.length > 0) {
-			this.setState(
-				(prevState) => {
-					return {
-						...prevState,
-						orderList: [
-							...prevState.orderList,
-							{
-								userDetail: prevState.userDetail,
-								cartList: prevState.cart,
-							},
-						],
-					};
-				},
-				() => {
-					console.log(this.state.orderList, "orderList");
-				}
-			);
-			// return null;
+			});
 		}
 	};
 	importPayment = async () => {
 		let query = firebase.firestore().collection("cart");
-		console.log(this.state.orderList, "555555555555");
 		await query
 			.get()
 			.then((querysnapshot) => {
@@ -141,75 +89,117 @@ class MySalesList extends Component {
 					//cartlist
 					this.setState({cart: []});
 					await this.fetchUserDetail(cartlists.id);
-					cartlists.data().cartlist.forEach(async (cart) => {
-						//cart
-						this.setState({
-							productList: [],
-							tmp: false,
-						});
+					for (const [
+						i,
+						cart,
+					] of cartlists.data().cartlist.entries()) {
+						console.log(cart, "cartone");
 						if (cart.payment_status && !cart.shop_check) {
-							cart.productlist.forEach(async (product) => {
-								//product
-								await this.fetchProduct(product);
+							for (const product of cart.productlist) {
+								console.log(product, "productone");
+								let query = firebase
+									.firestore()
+									.collection("product");
+								await query
+									.doc(product.id.split(" ")[0])
+									.get()
+									.then((documentsnapshots) => {
+										if (
+											documentsnapshots.data()
+												.store_id ===
+											this.props.store_id
+										) {
+											this.setState((prevState) => {
+												return {
+													...prevState,
+													tmp: true,
+													productList: [
+														...prevState.productList,
+														product,
+													],
+												};
+											});
+										}
+									})
+									.catch((e) => {
+										console.log(e.message);
+									});
+							}
+							if (this.state.tmp) {
+								let s = {
+									productList: this.state.productList,
+									shop_check: cart.shop_check,
+									realCartIndex: i,
+								};
+								this.setState((prevState) => {
+									return {
+										...prevState,
+										cart: [...prevState.cart, s],
+									};
+								});
+							}
+							this.setState({
+								tmp: false,
+								productList: [],
 							});
-							console.log(this.state.tmp, "tmp");
-							if (this.state.tmp) this.pushCart();
 						}
-					})
-					 this.summary();
+					}
+					this.summary();
 				});
-				this.setState({loading: false});
 			})
 			.catch((e) => {
 				console.log(e.message);
 			});
 	};
 	render() {
-		console.log(this.state.orderList, "dsdfada");
+		console.log(this.state.loading, "dsdfada", this.state.orderList);
 		if (this.props.isLoggedIn)
 			if (this.state.orderList && this.state.orderList.length > 0)
-				if (!this.state.loading)
-					return (
-						<div className="textS">
-							<h1 align="center" style={{fontSize: "4vw"}}>
-								{this.state.store}
-							</h1>
-							<div className="MySales textS">การขายของฉัน</div>
-							{this.state.orderList.map((order, i) => {
-								return (
-									<MyHistoryField
-										color={
-											i % 2 == 0 ? "light-brown" : "brown"
-										}
-										onClick={() => {
-											this.props.updateShop(
-												this.state.orderList
-											);
-											this.props.history.push(
-												"/" +
-													this.props.username +
-													"/sales/" +
-													order.userDetail.name
-											);
-										}}
-										type="clickable"
-										key={i + " payment"}
-										name={
-											order.userDetail.name +
-											" " +
-											order.userDetail.surname
-										}
-										phone={order.userDetail.phone}
-										email={order.userDetail.email}
-										address={order.userDetail.address}
-									/>
-								);
-							})}
-							<div style={{marginBottom: "calc(0vw + 1%)"}}></div>
-						</div>
-					);
-				else return <Loading />;
-			else return <EmptyOrder />;
+				return (
+					<div className="textS">
+						<h1 align="center" style={{fontSize: "4vw"}}>
+							{this.state.store}
+						</h1>
+						<div className="MySales textS">การขายของฉัน</div>
+						{this.state.orderList.map((order, i) => {
+							return (
+								<MyHistoryField
+									color={i % 2 === 0 ? "light-brown" : "brown"}
+									onClick={() => {
+										this.props.updateShop(
+											this.state.orderList
+										);
+										this.props.history.push(
+											"/" +
+												this.props.username +
+												"/sales/" +
+												order.userId
+										);
+									}}
+									type="clickable"
+									key={i + " payment"}
+									name={
+										order.userDetail.name +
+										" " +
+										order.userDetail.surname
+									}
+									phone={order.userDetail.phone}
+									email={order.userDetail.email}
+									address={order.userDetail.address}
+								/>
+							);
+						})}
+						<div style={{marginBottom: "calc(0vw + 1%)"}}></div>
+					</div>
+				);
+			else if (
+				(!this.state.loading &&
+					this.state.orderList &&
+					this.state.orderList.length === 0) ||
+				!this.state.alt
+			)
+				return <EmptyOrder />;
+			else return <Loading />;
 		else return <Redirect to="/login" />;
 	}
 }

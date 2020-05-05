@@ -52,7 +52,6 @@ class MyHistory extends Component {
 				for (let i = 0; i < this.props.cartList.length; i++) {
 					if (this.props.cartList[i].customer_check) cart_count += 1;
                 }
-                // console.log(cart_count,this.props.cartList.length,'safdsadfd')
 				if (cart_count !== this.props.cartList.length-1)
 					if (!this.state.loading)
 						return (

@@ -37,10 +37,11 @@ class Login extends Component {
 			.then((documentsnapshot) => {
 				this.props.importCart(
 					this.state.cart_id,
-					documentsnapshot.data().cartlist[documentsnapshot.data().cartlist.length - 1]
-						.productlist
+					documentsnapshot.data().cartlist[
+						documentsnapshot.data().cartlist.length - 1
+					].productlist
 				);
-                this.props.login(this.state.username);
+				this.props.login(this.state.username);
 			});
 	};
 
@@ -65,7 +66,7 @@ class Login extends Component {
 					this.setState({
 						username: documentsnapshot.data().username,
 						cart_id: documentsnapshot.data().cartid,
-                    });
+					});
 					this.props.importShop(documentsnapshot.data().store_id);
 				});
 			});
@@ -175,10 +176,12 @@ class Login extends Component {
 					</button>
 				</div>
 			);
-        } else {
-            // console.log(this.props.history.location)
-			if (this.props.history.location.state.from&&
-				this.props.history.location.state.from!=='' &&
+		} else {
+			// console.log(this.props.history.location)
+			if (
+				this.props.history.location.state &&
+				this.props.history.location.state.from &&
+				this.props.history.location.state.from !== "" &&
 				(this.props.history.location.state.from.includes("menu") ||
 					this.props.history.location.state.from.includes(
 						this.props.username

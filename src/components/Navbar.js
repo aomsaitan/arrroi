@@ -73,8 +73,8 @@ class Navbar extends Component {
 		carttmp[carttmp.length - 1].productlist = this.props.productList;
 		await query.doc(this.props.cart_id).set({cartlist: carttmp});
 		this.props.logout();
-        this.props.clearAll();
-        this.props.clearShop()
+		this.props.clearAll();
+		this.props.clearShop();
 		this.props.history.push({
 			pathname: "/login",
 			state: this.props.location.pathname,
@@ -83,12 +83,19 @@ class Navbar extends Component {
 	notify = () => {
 		console.log("dsdffddsfdffdssfddsdf");
 		let x = this.props.notification[0].notification_list.slice();
-		toast.info(x.reverse()[0].message, {
-			position: toast.POSITION.TOP_RIGHT,
-			autoClose: 2000,
-			pauseOnFocusLoss: false,
-			closeButton: true,
-		});
+		let y = x.reverse()[0].title.split(" ");
+		toast.success(
+			<span>
+				<span style={{color: "white"}}>{y[0]}</span>
+				&nbsp;{y[1]}
+			</span>,
+			{
+				position: toast.POSITION.TOP_RIGHT,
+				autoClose: 3000,
+				pauseOnFocusLoss: false,
+				closeButton: true,
+			}
+		);
 		this.props.updateNotification(x.length);
 		return null;
 	};

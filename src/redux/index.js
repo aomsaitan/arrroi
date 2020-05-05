@@ -5,7 +5,7 @@ import {firebaseReducer} from "react-redux-firebase";
 import { firestoreReducer } from "redux-firestore";
 import { notificationReducer} from "./reducers/notificationReducer";
 import { shopReducer } from './reducers/shopReducer'
-export {clearShop,importShop,updateShop} from './actions/shopAction'
+export {clearShop,importShop,updateShop,removeShop} from './actions/shopAction'
 export {updateNotification,finish} from "./actions/notificationAction";
 export {login, logout} from "./actions/loginAction";
 export {
