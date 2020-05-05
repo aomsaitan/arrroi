@@ -428,7 +428,7 @@ class Register extends Component {
 									}
 									maxLength="92"
 									hidden={true}
-									placeholder="99/99 หมู่ 9 ถนนสายไหม ต.จัดสรร อ.เมือง จ.อาหาร"
+									placeholder="99/99 ม.9 ต.ขนอม อ.ขนอม จ.นครศรีธรรมราช"
 								/>
 							</RegisterField>
 						</form>
