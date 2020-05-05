@@ -20,7 +20,6 @@ class MySales extends Component {
 					noti_key = documentsnapshot.data().noti_key;
 				});
 			});
-		console.log(noti_key, "sdffssfsffsf");
 		query = firebase.firestore().collection("notification");
 		await query
 			.doc(noti_key)
@@ -121,7 +120,12 @@ class MySales extends Component {
 						carttmp[
 							this.props.orderList[i].cartList[x].realCartIndex
 						].shop_check = true;
-						console.log(carttmp);
+						if (y === "cancel")
+							carttmp[
+								this.props.orderList[i].cartList[
+									x
+								].realCartIndex
+							].customer_check = true;
 						this.props.removeShop(
 							x,
 							this.props.orderList[i].userDetail.username

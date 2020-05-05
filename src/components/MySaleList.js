@@ -29,9 +29,7 @@ class MySalesList extends Component {
 		window.scrollTo(0, 0);
 		if (this.props.store_id) {
 			await this.getStoreName();
-			await this.importPayment().then(() => {
-				this.setState({loading: false});
-			});
+			await this.importPayment();
 		}
 	};
 	getStoreName = async () => {
@@ -123,15 +121,23 @@ class MySalesList extends Component {
 					}
 					this.summary(cartlists.id, carts);
 				});
+				if (this.props.orderList.length > 0) {
+					console.log("ffdfsddsdd");
+					this.setState({loading: false});
+				}
 			})
 			.catch((e) => {
 				console.log(e.message);
 			});
 	};
 	render() {
-		console.log(this.state.loading, "dsdfada", this.state.orderList);
+		console.log(this.state.loading, this.state.orderList);
 		if (this.props.isLoggedIn)
-			if (this.state.orderList && this.state.orderList.length > 0)
+			if (
+				!this.state.loading &&
+				this.state.orderList &&
+				this.state.orderList.length > 0
+			)
 				return (
 					<div className="textS">
 						<h1 align="center" style={{fontSize: "4vw"}}>
@@ -171,13 +177,8 @@ class MySalesList extends Component {
 						<div style={{marginBottom: "calc(0vw + 1%)"}}></div>
 					</div>
 				);
-			else if (
-				!this.state.loading &&
-					this.state.orderList &&
-					this.state.orderList.length === 0
-			)
-				return <EmptyOrder />;
-			else return <Loading />;
+			else if (this.state.loading) return <Loading />;
+			else return <EmptyOrder />;
 		else return <Redirect to="/login" />;
 	}
 }
