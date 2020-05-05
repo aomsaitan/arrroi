@@ -28,9 +28,10 @@ class MySalesList extends Component {
 	componentDidMount = async () => {
 		window.scrollTo(0, 0);
 		if (this.props.store_id) {
-			await this.importPayment();
 			await this.getStoreName();
-			this.setState({loading: false});
+			await this.importPayment().then(() => {
+				this.setState({loading: false});
+			});
 		}
 	};
 	getStoreName = async () => {
@@ -43,8 +44,8 @@ class MySalesList extends Component {
 				this.setState({store: documentsnapshot.data().name});
 			});
 	};
-	summary = async (cart_id) => {
-		if (this.state.cart.length > 0) {
+	summary = async (cart_id, cart) => {
+		if (cart.length > 0) {
 			let query = firebase.firestore().collection("user");
 			await query
 				.where("cartid", "==", cart_id)
@@ -52,23 +53,19 @@ class MySalesList extends Component {
 				.get()
 				.then((querysnapshot) => {
 					querysnapshot.forEach((documentsnapshot) => {
-						this.setState(
-							(prevState) => {
-								return {
-									...prevState,
-									orderList: [
-										...prevState.orderList,
-										{
-											userDetail: documentsnapshot.data(),
-											userId: documentsnapshot.id,
-											cartList: prevState.cart,
-										},
-									],
-									loading: false,
-									alt: false,
-								};
-							}
-						);
+						this.setState((prevState) => {
+							return {
+								...prevState,
+								orderList: [
+									...prevState.orderList,
+									{
+										userDetail: documentsnapshot.data(),
+										userId: documentsnapshot.id,
+										cartList: cart,
+									},
+								],
+							};
+						});
 					});
 				})
 				.catch((e) => {
@@ -78,68 +75,53 @@ class MySalesList extends Component {
 	};
 	importPayment = async () => {
 		let query = firebase.firestore().collection("cart");
-		let productList = [];
 		await query
 			.get()
 			.then((querysnapshot) => {
-				// for (const x in querysnapshot) {
-				// 	console.log("querere", x);
-				// }
 				querysnapshot.forEach(async (cartlists) => {
-					//cartlist
-                    this.setState({cart: []});
-                    console.log(cartlists.data().cartlist,'fdfffffff')
-                    for (const [i, cart] of cartlists.data().cartlist.entries()) {
-                        let productList = [];
-                        if (cart.payment_status && !cart.shop_check) {
-                            for (const product of cart.productlist) {
-                                let query = firebase.firestore().collection("product");
-                                await query
-                                    .doc(product.id.split(" ")[0])
-                                    .get()
-                                    .then((documentsnapshots) => {
-                                        if (
-                                            documentsnapshots.data().store_id ===
-                                            this.props.store_id
-                                        ) {
-                                            this.setState((prevState) => {
-                                                productList.push(product);
-                                                return {
-                                                    ...prevState,
-                                                    tmp: true,
-                                                    productList: [
-                                                        ...prevState.productList,
-                                                        product,
-                                                    ],
-                                                };
-                                            });
-                                        }
-                                    })
-                                    .catch((e) => {
-                                        console.log(e.message);
-                                    });
-                            }
-                            if (this.state.tmp) {
-                                let s = {
-                                    productList: productList,
-                                    shop_check: cart.shop_check,
-                                    realCartIndex: i,
-                                };
-                                this.setState((prevState) => {
-                                    return {
-                                        ...prevState,
-                                        cart: [...prevState.cart, s],
-                                    };
-                                });
-                            }
-                            this.setState({
-                                tmp: false,
-                                productList: [],
-                            });
-                        }
-                        console.log("last", this.state.cart);
-                    }
-					this.summary(cartlists.id);
+					let carts = [];
+					for (const [
+						i,
+						cart,
+					] of cartlists.data().cartlist.entries()) {
+						let productList = [];
+						if (cart.payment_status && !cart.shop_check) {
+							for (const product of cart.productlist) {
+								let query = firebase
+									.firestore()
+									.collection("product");
+								await query
+									.doc(product.id.split(" ")[0])
+									.get()
+									.then((documentsnapshots) => {
+										if (
+											documentsnapshots.data()
+												.store_id ===
+											this.props.store_id
+										) {
+											this.setState({tmp: true});
+											productList.push(product);
+										}
+									})
+									.catch((e) => {
+										console.log(e.message);
+									});
+							}
+
+							if (this.state.tmp) {
+								let s = {
+									productList: productList,
+									shop_check: cart.shop_check,
+									realCartIndex: i,
+								};
+								carts.push(s);
+							}
+							this.setState({
+								tmp: false,
+							});
+						}
+					}
+					this.summary(cartlists.id, carts);
 				});
 			})
 			.catch((e) => {
@@ -190,10 +172,9 @@ class MySalesList extends Component {
 					</div>
 				);
 			else if (
-				(!this.state.loading &&
+				!this.state.loading &&
 					this.state.orderList &&
-					this.state.orderList.length === 0) ||
-				!this.state.alt
+					this.state.orderList.length === 0
 			)
 				return <EmptyOrder />;
 			else return <Loading />;

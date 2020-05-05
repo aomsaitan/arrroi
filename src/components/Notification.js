@@ -11,40 +11,7 @@ class Notification extends Component {
 	componentDidMount = () => {
 		window.scrollTo(0, 0);
 	};
-	sendNotification = async () => {
-		let query = firebase.firestore().collection("user");
-		let noti_key;
-		await query
-			.where("username", "==", this.props.username)
-			.limit(1)
-			.get()
-			.then((querysnapshot) => {
-				querysnapshot.forEach((documentsnapshot) => {
-					noti_key = documentsnapshot.data().noti_key;
-				});
-			});
-		let noti_list = [];
-		console.log(noti_key, "sdffssfsffsf");
-		query = firebase.firestore().collection("notification");
-		await query
-			.doc(noti_key)
-			.get()
-			.then((documentsnapshot) => {
-				noti_list = documentsnapshot.data().notification_list;
-				console.log(noti_list, "fddfsfsfs");
-			});
-		noti_list.push({
-			message: "test",
-			time: firebase.firestore.Timestamp.now(),
-			title: "test",
-			type: "TEST",
-		});
-		query = firebase.firestore().collection("notification");
-		await query.doc(noti_key).set({
-			notification_list: noti_list,
-			username: this.props.username,
-		});
-	};
+	
 	render() {
 		console.log("dfsdad", this.props.notification);
 		if (this.props.isLoggedIn)

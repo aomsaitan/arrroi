@@ -34,42 +34,75 @@ class MyHistory extends Component {
 			});
 		this.setState({loading: false});
 	};
+	sendNotification = async (noti_key) => {
+		let query = firebase.firestore().collection("notification");
+		let noti_list = [];
+		await query
+			.doc(noti_key)
+			.get()
+			.then((documentsnapshot) => {
+				noti_list = documentsnapshot.data().notification_list;
+			});
+		noti_list.push({
+			message: "รถเข็นหมายเลข #" + this.props.cart_id + " สินค้าได้ถึงมือผู้ซื้อแล้ว",
+			time: firebase.firestore.Timestamp.now(),
+			title: "#" + this.props.cart_id + " ได้รับสินค้าแล้ว",
+			type: "order",
+		});
+		await query.doc(noti_key).update({
+			notification_list: noti_list,
+		});
+	};
 	deleteCart = async (event) => {
 		let x = parseInt(event.target.id.split(" ")[0]);
 		let query = firebase.firestore().collection("cart");
-		// await this.props.removeCart(x);
-		// await query
-		// 	.doc(this.props.cart_id)
-		// 	.set({cartlist: this.props.cartList})
-		// 	.catch((e) => {
-		// 		console.log(e.message);
-        //     });
-        console.log(x)
-		var storeList = [];
+		await this.props.removeCart(x);
+		await query
+			.doc(this.props.cart_id)
+			.set({cartlist: this.props.cartList})
+			.catch((e) => {
+				console.log(e.message);
+			});
+		let storeList = [];
 		await query
 			.doc(this.props.cart_id)
 			.get()
 			.then(async (documentsnapshot) => {
-                //cartlist
-                let cart = documentsnapshot.data().cartlist[x]
-						for (const [i, product] of cart.productlist.entries()) {
-                            console.log(product,'fffffff')
-							let query2 = firebase
-								.firestore()
-								.collection("product");
-							await query2
-								.doc(product.id)
-								.get()
-								.then((documentsnapshot) => {
-                                    console.log(documentsnapshot.data(),'storeList')
-									storeList.push(
-										documentsnapshot.data().store_id
-                                    );
-								})
-								.catch((e) => {
-									console.log(e.message);
-								});
-						}
+				//cartlist
+				let cart = documentsnapshot.data().cartlist[x];
+				for (const [i, product] of cart.productlist.entries()) {
+					console.log(product, "fffffff");
+					let query2 = firebase.firestore().collection("product");
+					await query2
+						.doc(product.id.split(" ")[0])
+						.get()
+						.then((documentsnapshot) => {
+							storeList.push(documentsnapshot.data().store_id);
+						})
+						.catch((e) => {
+							console.log(e.message);
+						});
+				}
+				let unique = storeList.filter((value, index, self) => {
+					return self.indexOf(value) === index;
+				});
+				for (const store of unique) {
+					let query3 = firebase.firestore().collection("user");
+					await query3
+						.where("store_id", "==", store)
+						.limit(1)
+						.get()
+						.then((querysnapshot) => {
+							querysnapshot.forEach(async (documentsnapshot) => {
+								await this.sendNotification(
+									documentsnapshot.data().noti_key
+								);
+							});
+						})
+						.catch((e) => {
+							console.log(e.message);
+						});
+				}
 			})
 			.catch((e) => {
 				console.log(e.message);

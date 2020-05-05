@@ -42,16 +42,18 @@ class BuyProduct extends Component {
 			};
 			this.props.addToCart(product);
 			toast(
-				<span style={{color: "#814A2C"}}>
-					คุณได้เพิ่ม&nbsp;
-					<span style={{color: "black"}}>
-						[{this.props.nameOfProduct}]
-					</span>
-					&nbsp;เข้ารถเข็นแล้ว
-				</span>,
+				<>
+					<div align= 'center'style={{color: "#814A2C"}}>
+						คุณได้เพิ่ม&nbsp;
+						<span style={{color: "black"}}>
+							[{this.props.nameOfProduct}]
+						</span>
+					</div>
+					<div align= 'center'style={{color: "#814A2C"}}>&nbsp;เข้ารถเข็นแล้ว</div>
+				</>,
 				{
 					position: toast.POSITION.TOP_RIGHT,
-					autoClose: 2000,
+					autoClose: 3000,
 					pauseOnFocusLoss: false,
 					closeButton: true,
 				}
@@ -167,20 +169,13 @@ class BuyProduct extends Component {
 					<Input
 						pass={this.getData}
 						id={"button " + this.props.id}
-						default={
-							this.props.quantity
-								? this.props.quantity
-								: 1
-						}
+						default={this.props.quantity ? this.props.quantity : 1}
 						onRef={(ref) => (this.child = ref)}
 						maxLength="3"
 						index={this.props.index}
 						size={this.state.size}
 						boundary={this.props.option[this.state.size].quantity}
-						quantity={
-							this.props.quantity
-								
-						}
+						quantity={this.props.quantity}
 					/>
 					<span>
 						สินค้าที่เหลือ&nbsp;
@@ -204,13 +199,14 @@ class BuyProduct extends Component {
 						</div>
 					) : (
 						<button
-							className="addToCartButton textS"
+							className={"addToCartButton textS "+(this.props.option[this.state.size].quantity===0? " gray":" normal")}
 							align="center"
 							style={
 								this.props.color === "brown"
 									? {backgroundColor: "#4A362B"}
 									: {backgroundColor: "#814A2C"}
-							}
+                            }
+                                disabled= {this.props.option[this.state.size].quantity===0? "false":null}
 							onClick={this.addItem}
 						>
 							<Image

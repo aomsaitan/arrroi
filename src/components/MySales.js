@@ -10,6 +10,7 @@ class MySales extends Component {
 	sendNotification = async (username, text, cartid) => {
 		let query = firebase.firestore().collection("user");
 		let noti_key;
+		let noti_list = [];
 		await query
 			.where("username", "==", username)
 			.limit(1)
@@ -19,7 +20,6 @@ class MySales extends Component {
 					noti_key = documentsnapshot.data().noti_key;
 				});
 			});
-		let noti_list = [];
 		console.log(noti_key, "sdffssfsffsf");
 		query = firebase.firestore().collection("notification");
 		await query
@@ -27,7 +27,6 @@ class MySales extends Component {
 			.get()
 			.then((documentsnapshot) => {
 				noti_list = documentsnapshot.data().notification_list;
-				console.log(noti_list, "fddfsfsfs");
 			});
 		noti_list.push({
 			message:
@@ -45,10 +44,8 @@ class MySales extends Component {
 					: "#" + cartid + " ได้รับการตอบรับแล้ว",
 			type: "order",
 		});
-		query = firebase.firestore().collection("notification");
-		await query.doc(noti_key).set({
+		await query.doc(noti_key).update({
 			notification_list: noti_list,
-			username: username,
 		});
 	};
 	deleteCart = async (event) => {

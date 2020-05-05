@@ -84,18 +84,36 @@ class Navbar extends Component {
 		console.log("dsdffddsfdffdssfddsdf");
 		let x = this.props.notification[0].notification_list.slice();
 		let y = x.reverse()[0].title.split(" ");
-		toast.success(
-			<span>
-				<span style={{color: "white"}}>{y[0]}</span>
-				&nbsp;{y[1]}
-			</span>,
-			{
-				position: toast.POSITION.TOP_RIGHT,
-				autoClose: 3000,
-				pauseOnFocusLoss: false,
-				closeButton: true,
-			}
-		);
+		if (y[1].includes("ยกเลิก"))
+			toast.error(
+				<>
+					<div align="center" style={{color: "white"}}>
+						{y[0]}
+					</div>
+					<div align="center">{y[1]}</div>
+				</>,
+				{
+					position: toast.POSITION.TOP_RIGHT,
+					autoClose: 3000,
+					pauseOnFocusLoss: false,
+					closeButton: true,
+				}
+			);
+		else
+			toast.success(
+				<>
+					<div align="center" style={{color: "white"}}>
+						{y[0]}
+					</div>
+					<div align="center">{y[1]}</div>
+				</>,
+				{
+					position: toast.POSITION.TOP_RIGHT,
+					autoClose: 3000,
+					pauseOnFocusLoss: false,
+					closeButton: true,
+				}
+			);
 		this.props.updateNotification(x.length);
 		return null;
 	};
@@ -312,13 +330,16 @@ class Navbar extends Component {
 					// 				state: this.props.history.location.pathname,
 					// 		  }
 					// }
-                    onClick={() => {
-                        this.props.history.push(this.props.isLoggedIn
-							? "/" + this.props.username + "/cart"
-							: {
-									pathname: "/login",
-									state: this.props.history.location.pathname,
-							  })
+					onClick={() => {
+						this.props.history.push(
+							this.props.isLoggedIn
+								? "/" + this.props.username + "/cart"
+								: {
+										pathname: "/login",
+										state: this.props.history.location
+											.pathname,
+								  }
+						);
 						window.location.reload();
 					}}
 				>

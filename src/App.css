@@ -116,6 +116,7 @@ button:hover {
     opacity: 0.8;
 }
 
+
 .fullWidth {
     width: 100%;
 }
@@ -378,7 +379,17 @@ div.top {
     font-size: 3.8vw;
     margin-top: 6vw;
 }
+.gray {
+    opacity: 0.4;
+    cursor: default;
+}
+.normal {
+    cursor: pointer;
+}
 
+button.gray:hover {
+    opacity: 0.4;
+}
 /* //////////////////////////////////////////////////About////////////////////////////////////////////////////////////// */
 
 h1.aboutUs {
@@ -603,7 +614,6 @@ div.slide {
     font-size: 1.5vw;
     display: block;
     margin: 1vw 17.5vw;
-    cursor: pointer;
 }
 
 .cartImg {
