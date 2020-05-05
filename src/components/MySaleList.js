@@ -121,10 +121,10 @@ class MySalesList extends Component {
 					}
 					this.summary(cartlists.id, carts);
 				});
-				if (this.props.orderList.length > 0) {
-					console.log("ffdfsddsdd");
-					this.setState({loading: false});
-				}
+                this.setState({loading: false});
+				// if (this.props.orderList.length > 0) {
+				// 	console.log("ffdfsddsdd");
+				// }
 			})
 			.catch((e) => {
 				console.log(e.message);

@@ -69,6 +69,7 @@ class Cart extends Component {
 					console.log("Error", error);
 				});
 		}
+		let dif = 0;
 		this.props.productList.map((product, i) => {
 			if (
 				product.option[
@@ -76,8 +77,10 @@ class Cart extends Component {
 						(item) => item.size === product.size
 					)
 				].quantity === 0
-			)
-				this.props.removeFromCart(i);
+			) {
+				this.props.removeFromCart(i - dif);
+				dif++;
+			}
 		});
 		this.setState({isLoading: false});
 	};
