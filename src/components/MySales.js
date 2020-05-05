@@ -67,31 +67,83 @@ class MySales extends Component {
 				await query
 					.doc(cartid)
 					.get()
-					.then((documentsnapshop) => {
+					.then(async (documentsnapshop) => {
+						console.log(documentsnapshop.data());
 						carttmp = documentsnapshop.data().cartlist;
+						console.log(
+							"tf",
+							this.props.orderList[i].cartList[x],
+							this.props.orderList[i],
+							carttmp
+						);
+						let tmp = "";
+						if (y !== "cancel") {
+							for (const [index, product] of carttmp[
+								this.props.orderList[i].cartList[x]
+									.realCartIndex
+							].productlist.entries()) {
+								console.log(product, "product");
+								let query2 = firebase
+									.firestore()
+									.collection("product");
+								await query2
+									.doc(product.id.split(" ")[0])
+									.get()
+									.then((documentsnapshot) => {
+										console.log(documentsnapshot.data());
+										tmp = documentsnapshot.data().option;
+										tmp[
+											product.option.findIndex(
+												(item) =>
+													item.size === product.size
+											)
+										].quantity < product.quantity
+											? (tmp[
+													product.option.findIndex(
+														(item) =>
+															item.size ===
+															product.size
+													)
+											  ].quantity = 0)
+											: (tmp[
+													product.option.findIndex(
+														(item) =>
+															item.size ===
+															product.size
+													)
+											  ].quantity -= product.quantity);
+									})
+									.catch(function (error) {
+										console.log("Error", error);
+									});
+								await query2
+									.doc(product.id.split(" ")[0])
+									.update({option: tmp});
+							}
+						}
+						carttmp[
+							this.props.orderList[i].cartList[x].realCartIndex
+						].shop_check = true;
+						console.log(carttmp);
+						this.props.removeShop(
+							x,
+							this.props.orderList[i].userDetail.username
+						);
+						await query
+							.doc(cartid)
+							.set({cartlist: carttmp})
+							.catch((e) => {
+								console.log(e.message);
+							});
+						await this.sendNotification(
+							this.props.orderList[i].userDetail.username,
+							y === "cancel" ? "cancel" : "accept",
+							cartid
+						);
 					})
 					.catch((e) => {
 						console.log(e.message);
 					});
-				carttmp[
-					this.props.orderList[i].cartList[x].realCartIndex
-				].shop_check = true;
-				this.props.removeShop(
-					x,
-					this.props.orderList[i].userDetail.username
-				);
-				await query
-					.doc(cartid)
-					.set({cartlist: carttmp})
-					.catch((e) => {
-						console.log(e.message);
-					});
-				await this.sendNotification(
-					this.props.orderList[i].userDetail.username,
-					y === "cancel" ? "cancel" : "accept",
-					cartid
-				);
-				return null;
 			}
 		}
 	};

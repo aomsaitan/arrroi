@@ -37,10 +37,40 @@ class MyHistory extends Component {
 	deleteCart = async (event) => {
 		let x = parseInt(event.target.id.split(" ")[0]);
 		let query = firebase.firestore().collection("cart");
-		await this.props.removeCart(x);
+		// await this.props.removeCart(x);
+		// await query
+		// 	.doc(this.props.cart_id)
+		// 	.set({cartlist: this.props.cartList})
+		// 	.catch((e) => {
+		// 		console.log(e.message);
+        //     });
+        console.log(x)
+		var storeList = [];
 		await query
 			.doc(this.props.cart_id)
-			.set({cartlist: this.props.cartList})
+			.get()
+			.then(async (documentsnapshot) => {
+                //cartlist
+                let cart = documentsnapshot.data().cartlist[x]
+						for (const [i, product] of cart.productlist.entries()) {
+                            console.log(product,'fffffff')
+							let query2 = firebase
+								.firestore()
+								.collection("product");
+							await query2
+								.doc(product.id)
+								.get()
+								.then((documentsnapshot) => {
+                                    console.log(documentsnapshot.data(),'storeList')
+									storeList.push(
+										documentsnapshot.data().store_id
+                                    );
+								})
+								.catch((e) => {
+									console.log(e.message);
+								});
+						}
+			})
 			.catch((e) => {
 				console.log(e.message);
 			});
@@ -51,8 +81,8 @@ class MyHistory extends Component {
 			if (this.props.cartList) {
 				for (let i = 0; i < this.props.cartList.length; i++) {
 					if (this.props.cartList[i].customer_check) cart_count += 1;
-                }
-				if (cart_count !== this.props.cartList.length-1)
+				}
+				if (cart_count !== this.props.cartList.length - 1)
 					if (!this.state.loading)
 						return (
 							<div className="textS">

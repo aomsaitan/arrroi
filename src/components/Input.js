@@ -11,14 +11,30 @@ class Input extends Component {
 			open: false,
 			isFocused: false,
 		};
-	}
+		console.log(this.props, "updata", this.state);
+		this.props.quantity
+			? this.props.updateCart(
+					this.props.index,
+					this.state.text,
+					this.props.size
+			  )
+			: console.log("huh");
+    }
+    componentWillMount = () => {
+        if(this.props.onRef)this.props.onRef(undefined)
+    }
+    componentDidMount = () => {
+        if(this.props.onRef)this.props.onRef(this)
+    }
 	addValue = (event) => {
-		// updateCart(index,value,type)
 		this.setState(
 			(prevState) => ({
 				text:
 					parseInt(prevState.text) < 999
-						? parseInt(prevState.text) + 1
+						? parseInt(prevState.text) <
+						  parseInt(this.props.boundary)
+							? parseInt(prevState.text) + 1
+							: parseInt(this.props.boundary)
 						: 999,
 			}),
 			() => {
@@ -54,16 +70,34 @@ class Input extends Component {
 			}
 		);
 	};
+	setText = (quantity) => {
+		this.setState(
+			{
+				text: quantity,
+			},
+			() => {
+				this.props.updateCart(
+					this.props.index,
+					this.state.text,
+					this.props.size
+				);
+			}
+		);
+	};
 	handleChange = (event) => {
 		this.setState({
 			text: event.target.value,
 		});
+		console.log("handlechange");
 		if (event.target.id.includes("button")) {
 			if (
 				event.target.value === "" ||
 				parseInt(event.target.value) === 0
 			) {
 				event.target.value = 1;
+			}
+			if (parseInt(event.target.value) > this.props.boundary) {
+				event.target.value = this.props.boundary;
 			}
 			this.setState({
 				text: event.target.value,
@@ -295,7 +329,7 @@ class Input extends Component {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		updateCart: (index, value,  size) =>
+		updateCart: (index, value, size) =>
 			dispatch(updateCart(index, value, size)),
 	};
 };

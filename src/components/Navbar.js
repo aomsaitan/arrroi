@@ -304,14 +304,23 @@ class Navbar extends Component {
 				)}
 				<Link
 					className="link"
-					to={
-						this.props.isLoggedIn
+					// to={
+					// 	this.props.isLoggedIn
+					// 		? "/" + this.props.username + "/cart"
+					// 		: {
+					// 				pathname: "/login",
+					// 				state: this.props.history.location.pathname,
+					// 		  }
+					// }
+                    onClick={() => {
+                        this.props.history.push(this.props.isLoggedIn
 							? "/" + this.props.username + "/cart"
 							: {
 									pathname: "/login",
 									state: this.props.history.location.pathname,
-							  }
-					}
+							  })
+						window.location.reload();
+					}}
 				>
 					{this.props.numberOfItems !== 0 ? (
 						<div

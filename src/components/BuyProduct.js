@@ -5,13 +5,14 @@ import {addToCart, removeFromCart} from "../redux/index";
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Image from "./Image";
-import {updateCart} from "../redux/index";
+import {updateCart, updateOption} from "../redux/index";
 import {withRouter} from "react-router-dom";
 import {toast} from "react-toastify";
 
 class BuyProduct extends Component {
 	constructor(props) {
 		super(props);
+		this.child = React.createRef();
 		this.state = {
 			size_name: this.props.option[0].size,
 			quantity: this.props.quantity ? this.props.quantity : 1,
@@ -39,7 +40,6 @@ class BuyProduct extends Component {
 				option: this.props.option,
 				id: this.props.id + " " + this.props.numberOfItems,
 			};
-			console.log(product);
 			this.props.addToCart(product);
 			toast(
 				<span style={{color: "#814A2C"}}>
@@ -66,6 +66,7 @@ class BuyProduct extends Component {
 		let x = document.getElementsByName("radio " + this.props.id);
 		for (let i = 0; i < x.length; i++) {
 			if (x[i].checked) {
+				console.log(this.state, "quantity");
 				this.setState(
 					(prevState) => ({
 						...prevState,
@@ -73,7 +74,29 @@ class BuyProduct extends Component {
 						size_name: this.props.option[i].size,
 					}),
 					() => {
-						if (this.props.id.split(" ").length > 1)
+						if (
+							this.props.quantity >
+							this.props.option[this.state.size].quantity
+						) {
+							console.log(this.child);
+							this.child.setText(
+								this.props.option[this.state.size].quantity
+							);
+							this.setState(
+								{
+									quantity: this.props.option[this.state.size]
+										.quantity,
+								},
+								() => {
+									if (this.props.id.split(" ").length > 1)
+										this.props.updateCart(
+											this.props.index,
+											this.state.quantity,
+											this.state.size
+										);
+								}
+							);
+						} else if (this.props.id.split(" ").length > 1)
 							this.props.updateCart(
 								this.props.index,
 								this.state.quantity,
@@ -85,7 +108,7 @@ class BuyProduct extends Component {
 		}
 	};
 	render() {
-        console.log(this.props)
+		console.log(this.props, "now", this.state.size);
 		return (
 			<div
 				className="storeBox textS"
@@ -144,10 +167,20 @@ class BuyProduct extends Component {
 					<Input
 						pass={this.getData}
 						id={"button " + this.props.id}
-						default={this.props.quantity ? this.props.quantity : 1}
+						default={
+							this.props.quantity
+								? this.props.quantity
+								: 1
+						}
+						onRef={(ref) => (this.child = ref)}
 						maxLength="3"
 						index={this.props.index}
 						size={this.state.size}
+						boundary={this.props.option[this.state.size].quantity}
+						quantity={
+							this.props.quantity
+								
+						}
 					/>
 					<span>
 						สินค้าที่เหลือ&nbsp;
@@ -207,6 +240,7 @@ const mapDispatchToProps = (dispatch) => {
 		removeFromCart: (id) => dispatch(removeFromCart(id)),
 		updateCart: (index, value, size) =>
 			dispatch(updateCart(index, value, size)),
+		updateOption: (option, index) => dispatch(updateOption(option, index)),
 	};
 };
 export default compose(

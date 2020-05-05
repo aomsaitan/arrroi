@@ -123,7 +123,7 @@ class Ingredients extends Component {
 							des={this.state.detail.detail}
 						/>
 					) : null}
-					{this.state.productList.map((product, i) => {
+                    {this.state.productList.map((product, i) => {
 						return (
 							<BuyProduct
 								key={product.product_id}

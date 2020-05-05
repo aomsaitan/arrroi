@@ -6,7 +6,8 @@ export const CLEAR_ALL = "CLEAR_ALL";
 export const NEW_CART = "NEW_CART";
 export const REMOVE_CART = "REMOVE_CART";
 export const IMPORT_CARTLIST = "IMPORT_CARTLIST";
-export const IMPORT_PAYMENT = "IMPORT_PAYMENT"
+export const IMPORT_PAYMENT = "IMPORT_PAYMENT";
+export const UPDATE_OPTION = "UPDATE_OPTION";
 export const addToCart = (item) => {
 	return {
 		type: ADD_TO_CART,
@@ -35,18 +36,17 @@ export const importCart = (id, productList) => {
 		payload: {
 			productList: productList,
 			id: id,
-			
 		},
 	};
 };
 export const importPayment = (productList) => {
-    return {
-        type: IMPORT_PAYMENT,
-        payload: {
-            productList: productList
-        }
-    }
-}
+	return {
+		type: IMPORT_PAYMENT,
+		payload: {
+			productList: productList,
+		},
+	};
+};
 export const newCart = () => {
 	return {
 		type: NEW_CART,
@@ -67,5 +67,11 @@ export const importCartList = (cartList) => {
 	return {
 		type: IMPORT_CARTLIST,
 		payload: cartList,
+	};
+};
+export const updateOption = (option, index) => {
+	return {
+		type: UPDATE_OPTION,
+		payload: {option: option, index: index},
 	};
 };

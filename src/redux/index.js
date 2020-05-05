@@ -16,7 +16,7 @@ export {
 	newCart,
 	importCartList,
 	removeCart,
-	clearAll,
+	clearAll,updateOption
 } from "./actions/addToCartAction";
 export default combineReducers({
 	addToCartReducer,

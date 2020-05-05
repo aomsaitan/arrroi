@@ -6,7 +6,7 @@ import {
 	NEW_CART,
 	IMPORT_CARTLIST,
 	REMOVE_CART,
-	CLEAR_ALL,
+	CLEAR_ALL,UPDATE_OPTION
 } from "../actions/addToCartAction";
 const initialState = {
 	id: "",
@@ -24,8 +24,17 @@ export const addToCartReducer = (state = initialState, action) => {
 				for (let i = 0; i < state.productList.length; i++) {
 					if (
 						state.productList[i].name === action.payload.name &&
-						state.productList[i].size === action.payload.size
-					) {
+						state.productList[i].size === action.payload.size && state.productList[i].option[
+                            state.productList[
+                                i
+                            ].option.findIndex(
+                                (item) =>
+                                    item.size ===
+                                    action.payload
+                                        .size
+                            )
+                      ].quantity !==0
+                    ) {
 						return {
 							...state,
 							productList: [
@@ -36,23 +45,173 @@ export const addToCartReducer = (state = initialState, action) => {
 											action.payload.quantity +
 												state.productList[i].quantity
 										) <= 999
-											? state.productList[i].price +
-											  action.payload.price
-											: 999 * action.payload.price,
+											? parseInt(
+													action.payload.quantity +
+														state.productList[i]
+															.quantity
+											  ) <=
+											  action.payload.option[
+													state.productList[
+														i
+													].option.findIndex(
+														(item) =>
+															item.size ===
+															action.payload.size
+													)
+											  ].quantity
+												? action.payload.price +
+												  state.productList[i].price
+												: state.productList[i].option[
+														state.productList[
+															i
+														].option.findIndex(
+															(item) =>
+																item.size ===
+																action.payload
+																	.size
+														)
+												  ].quantity *
+												  state.productList[i].option[
+														state.productList[
+															i
+														].option.findIndex(
+															(item) =>
+																item.size ===
+																action.payload
+																	.size
+														)
+												  ].price
+											: 999 *
+											  state.productList[i].option[
+													state.productList[
+														i
+													].option.findIndex(
+														(item) =>
+															item.size ===
+															action.payload.size
+													)
+											  ].price,
 									quantity:
 										parseInt(
 											action.payload.quantity +
 												state.productList[i].quantity
 										) <= 999
-											? state.productList[i].quantity +
-											  action.payload.quantity
+											? parseInt(
+													action.payload.quantity +
+														state.productList[i]
+															.quantity
+											  ) <=
+											  action.payload.option[
+													state.productList[
+														i
+													].option.findIndex(
+														(item) =>
+															item.size ===
+															action.payload.size
+													)
+											  ].quantity
+												? action.payload.quantity +
+												  state.productList[i].quantity
+												: state.productList[i].option[
+														state.productList[
+															i
+														].option.findIndex(
+															(item) =>
+																item.size ===
+																action.payload
+																	.size
+														)
+												  ].quantity
 											: 999,
 								}),
 								...state.productList.slice(i + 1),
 							],
-							totalPrice: state.totalPrice + action.payload.price,
+							totalPrice:
+								parseInt(
+									action.payload.quantity +
+										state.productList[i].quantity
+								) <= 999
+									? parseInt(
+											action.payload.quantity +
+												state.productList[i].quantity
+									  ) <=
+									  state.productList[i].option[
+											state.productList[
+												i
+											].option.findIndex(
+												(item) =>
+													item.size ===
+													action.payload.size
+											)
+									  ].quantity
+										? state.totalPrice +
+										  action.payload.price
+										: state.totalPrice -
+										  state.productList[i].price +
+										  state.productList[i].option[
+												state.productList[
+													i
+												].option.findIndex(
+													(item) =>
+														item.size ===
+														action.payload.size
+												)
+										  ].price *
+												state.productList[i].option[
+													state.productList[
+														i
+													].option.findIndex(
+														(item) =>
+															item.size ===
+															action.payload.size
+													)
+												].quantity
+									: state.totalPrice -
+									  state.productList[i].price +
+									  999 *
+											state.productList[i].option[
+												state.productList[
+													i
+												].option.findIndex(
+													(item) =>
+														item.size ===
+														action.payload.size
+												)
+											].price,
 							numberOfItems:
-								state.numberOfItems + action.payload.quantity,
+								parseInt(
+									action.payload.quantity +
+										state.productList[i].quantity
+								) <= 999
+									? parseInt(
+											action.payload.quantity +
+												state.productList[i].quantity
+									  ) <=
+									  state.productList[i].option[
+											state.productList[
+												i
+											].option.findIndex(
+												(item) =>
+													item.size ===
+													action.payload.size
+											)
+									  ].quantity
+										? state.numberOfItems +
+										  action.payload.quantity
+										: state.numberOfItems -
+										  state.productList[i].quantity +
+										  state.productList[i].option[
+												state.productList[
+													i
+												].option.findIndex(
+													(item) =>
+														item.size ===
+														action.payload.size
+												)
+										  ].quantity
+									: state.numberOfItems -
+									  state.productList[i].quantity +
+									  999,
 						};
 					}
 				}
@@ -118,7 +277,6 @@ export const addToCartReducer = (state = initialState, action) => {
 				productList: action.payload.productList,
 				numberOfItems: numberOfItems,
 				totalPrice: totalPrice,
-				// length:action.payload.length
 			};
 		}
 		case IMPORT_CARTLIST: {
@@ -128,14 +286,26 @@ export const addToCartReducer = (state = initialState, action) => {
 			return {
 				...state,
 				cartList: [
-					...state.cartList.slice(0,action.payload),
+					...state.cartList.slice(0, action.payload),
 					Object.assign({}, state.cartList[action.payload], {
 						customer_check: true,
 					}),
 					...state.cartList.slice(action.payload + 1),
 				],
 			};
-		}
+        }
+        case UPDATE_OPTION: {
+            return {
+                ...state,
+				productList: [
+					...state.productList.slice(0, action.payload.index),
+					Object.assign({}, state.productList[action.payload.index], {
+						option:action.payload.option
+					}),
+					...state.productList.slice(action.payload.index + 1),
+				],
+            }
+        }
 		case NEW_CART: {
 			return {...state, productList: [], numberOfItems: 0, totalPrice: 0};
 		}
