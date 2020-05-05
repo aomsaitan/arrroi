@@ -7,6 +7,7 @@ import {withRouter, Redirect} from "react-router-dom";
 import EmptyCart from "./EmptyCart";
 import firebase from "../database/firebase";
 import Loading from "./Loading";
+import {toast} from "react-toastify";
 
 class Cart extends Component {
 	constructor(props) {
@@ -43,7 +44,7 @@ class Cart extends Component {
 				});
 		}
 		if (!tmp) {
-			alert("กรุณาตรวจสอบสินค้าในจะกร้าใหม่");
+			alert("กรุณาตรวจสอบสินค้าในรถเข็นใหม่");
 			window.location.reload();
 		} else {
 			this.props.history.push(
@@ -77,8 +78,25 @@ class Cart extends Component {
 						(item) => item.size === product.size
 					)
 				].quantity === 0
-			) {
-				this.props.removeFromCart(i - dif);
+			) {				
+                this.props.removeFromCart(i - dif);
+                toast.error(
+					<>
+						<div align="center" style={{color: "black"}}>
+							สินค้า&nbsp;
+							<span style={{color: "white"}}>[{product.name}]</span>
+						</div>
+						<div align="center" style={{color: "black"}}>
+							&nbsp;ไม่เหลือในสต๊อกแล้ว
+						</div>
+					</>,
+					{
+						position: toast.POSITION.TOP_RIGHT,
+						autoClose: 3000,
+						pauseOnFocusLoss: false,
+						closeButton: true,
+					}
+				);
 				dif++;
 			}
 		});
