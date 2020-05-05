@@ -121,11 +121,17 @@ class MySales extends Component {
 							this.props.orderList[i].cartList[x].realCartIndex
 						].shop_check = true;
 						if (y === "cancel")
-							carttmp[
+							{carttmp[
 								this.props.orderList[i].cartList[
 									x
 								].realCartIndex
-							].customer_check = true;
+                        ].customer_check = true;
+                        carttmp[
+                            this.props.orderList[i].cartList[
+                                x
+                            ].realCartIndex
+                        ].delete = true;
+                        }
 						this.props.removeShop(
 							x,
 							this.props.orderList[i].userDetail.username
